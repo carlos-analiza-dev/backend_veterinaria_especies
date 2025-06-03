@@ -18,6 +18,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { MailService } from 'src/mail/mail.service';
 import { PaginationDto } from '../common/dto/pagination-common.dto';
 import { instanceToPlain } from 'class-transformer';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -158,6 +159,66 @@ export class AuthService {
       return instanceToPlain(usuario);
     } catch (error) {
       throw error;
+    }
+  }
+
+  async actualizarUsuario(userId: string, updateUsuarioDto: UpdateUserDto) {
+    try {
+      const usuario = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: ['pais'],
+      });
+
+      if (!usuario) {
+        throw new NotFoundException('Usuario no encontrado');
+      }
+
+      if (updateUsuarioDto.pais) {
+        const pais = await this.paisRepo.findOne({
+          where: { id: updateUsuarioDto.pais },
+        });
+        if (!pais) {
+          throw new BadRequestException('El país seleccionado no existe');
+        }
+        usuario.pais.id = pais.id;
+      }
+
+      const camposActualizables = [
+        'email',
+        'name',
+        'identificacion',
+        'direccion',
+        'telefono',
+        'rol',
+        'isActive',
+        'isAuthorized',
+      ];
+
+      camposActualizables.forEach((campo) => {
+        if (updateUsuarioDto[campo] !== undefined) {
+          usuario[campo] = updateUsuarioDto[campo];
+        }
+      });
+
+      if (updateUsuarioDto.email && updateUsuarioDto.email !== usuario.email) {
+        const emailExiste = await this.userRepository.findOne({
+          where: { email: updateUsuarioDto.email },
+        });
+        if (emailExiste && emailExiste.id !== userId) {
+          throw new BadRequestException(
+            'El correo electrónico ya está registrado',
+          );
+        }
+      }
+
+      await this.userRepository.save(usuario);
+
+      const usuarioActualizado = instanceToPlain(usuario);
+      delete usuarioActualizado.password;
+
+      return usuarioActualizado;
+    } catch (error) {
+      this.handleDatabaseErrors(error);
     }
   }
 

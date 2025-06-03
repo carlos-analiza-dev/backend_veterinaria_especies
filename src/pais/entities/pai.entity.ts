@@ -9,6 +9,9 @@ export class Pai {
   @Column({ type: 'text', unique: true })
   nombre: string;
 
+  @Column({ type: 'text', unique: true })
+  code: string;
+
   @OneToMany(() => User, (usuario) => usuario.pais)
   usuario: User[];
 

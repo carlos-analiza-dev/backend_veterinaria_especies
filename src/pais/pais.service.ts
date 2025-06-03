@@ -12,10 +12,11 @@ export class PaisService {
     private readonly paisRepo: Repository<Pai>,
   ) {}
   async create(createPaiDto: CreatePaiDto) {
-    const { nombre } = createPaiDto;
+    const { nombre, code } = createPaiDto;
 
     const pais = this.paisRepo.create({
       nombre,
+      code,
     });
     await this.paisRepo.save(pais);
     return 'Pais Creado Exitosamente';
@@ -35,12 +36,32 @@ export class PaisService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pai`;
+  async findOne(id: string) {
+    try {
+      const pais = await this.paisRepo.findOne({ where: { id } });
+      if (!pais) {
+        throw new NotFoundException('No se encontro el pais seleccionado');
+      }
+      return pais;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  update(id: number, updatePaiDto: UpdatePaiDto) {
-    return `This action updates a #${id} pai`;
+  async update(id: string, updatePaiDto: UpdatePaiDto) {
+    const pais = await this.paisRepo.findOne({ where: { id } });
+
+    if (!pais) {
+      throw new NotFoundException(`No se encontró el país con ID: ${id}`);
+    }
+
+    const updatedPais = this.paisRepo.merge(pais, updatePaiDto);
+    await this.paisRepo.save(updatedPais);
+
+    return {
+      message: 'País actualizado correctamente',
+      pais: updatedPais,
+    };
   }
 
   remove(id: number) {

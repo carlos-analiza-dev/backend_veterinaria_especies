@@ -16,6 +16,8 @@ import { GetUser } from './decorators/get-user.decorator';
 import { User } from './entities/auth.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ValidRoles } from 'src/interfaces/valid-roles.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -52,5 +54,14 @@ export class AuthController {
   @Auth()
   getUserById(@Param('userId') userId: string) {
     return this.authService.getUserById(userId);
+  }
+
+  @Patch('user-update/:userId')
+  @Auth(ValidRoles.Administrador)
+  actualizarUsuario(
+    @Param('userId') userId: string,
+    @Body() updateUsuarioDto: UpdateUserDto,
+  ) {
+    return this.authService.actualizarUsuario(userId, updateUsuarioDto);
   }
 }

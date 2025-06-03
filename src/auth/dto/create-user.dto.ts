@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -55,10 +56,17 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty({ message: 'El pais es obligatorio' })
-  @IsUUID()
   pais: string;
 
   @IsOptional()
   @IsString()
   rol?: UserRole;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isAuthorized?: boolean;
 }
