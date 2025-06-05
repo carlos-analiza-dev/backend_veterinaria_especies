@@ -8,6 +8,18 @@ export class CreatePaiDto {
   @IsString()
   @IsNotEmpty()
   code: string;
+  @IsString()
+  @IsNotEmpty()
+  code_phone: string;
+  @IsString()
+  @IsNotEmpty()
+  nombre_moneda: string;
+  @IsString()
+  @IsNotEmpty()
+  simbolo_moneda: string;
+  @IsString()
+  @IsNotEmpty()
+  nombre_documento: string;
 
   @IsBoolean()
   @IsOptional()

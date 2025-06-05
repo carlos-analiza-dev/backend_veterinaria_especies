@@ -19,12 +19,18 @@ import { MailService } from 'src/mail/mail.service';
 import { PaginationDto } from '../common/dto/pagination-common.dto';
 import { instanceToPlain } from 'class-transformer';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
+import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Pai) private readonly paisRepo: Repository<Pai>,
+    @InjectRepository(MunicipiosDepartamentosPai)
+    private readonly municipioRepo: Repository<MunicipiosDepartamentosPai>,
+    @InjectRepository(DepartamentosPai)
+    private readonly departamentoRepo: Repository<DepartamentosPai>,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
   ) {}
@@ -36,25 +42,49 @@ export class AuthService {
       direccion,
       identificacion,
       telefono,
-      pais,
+      pais: paisId,
+      departamento: departamentoId,
+      municipio: municipioId,
       rol,
     } = createUserDto;
 
-    const pais_existe = await this.paisRepo.findOne({ where: { id: pais } });
-    if (!pais_existe)
-      throw new BadRequestException('No se encontro el pais seleccionado.');
+    const pais_existe = await this.paisRepo.findOne({ where: { id: paisId } });
+    if (!pais_existe) {
+      throw new BadRequestException('No se encontró el país seleccionado.');
+    }
+
+    const departamento_existe = await this.departamentoRepo.findOne({
+      where: { id: departamentoId },
+    });
+    if (!departamento_existe) {
+      throw new BadRequestException(
+        'No se encontró el departamento seleccionado.',
+      );
+    }
+
+    const municipio_existe = await this.municipioRepo.findOne({
+      where: { id: municipioId },
+    });
+    if (!municipio_existe) {
+      throw new BadRequestException(
+        'No se encontró el municipio seleccionado.',
+      );
+    }
 
     try {
       const user = this.userRepository.create({
-        email: email,
+        email,
         password: bcrypt.hashSync(password, 10),
-        name: name,
+        name,
         direccion,
         identificacion,
         telefono,
-        pais: pais_existe,
         rol,
+        pais: pais_existe,
+        departamento: departamento_existe,
+        municipio: municipio_existe,
       });
+
       await this.userRepository.save(user);
       delete user.password;
 
@@ -100,18 +130,23 @@ export class AuthService {
 
   async actualizarContrasena(updatePassword: UpdatePasswordDto) {
     const { email, nuevaContrasena } = updatePassword;
-    const usuario = await this.userRepository.findOne({ where: { email } });
 
-    if (!usuario) {
-      throw new NotFoundException('El correo no existe en la base de datos');
+    try {
+      const usuario = await this.userRepository.findOne({ where: { email } });
+
+      if (!usuario) {
+        throw new NotFoundException('El correo no existe en la base de datos');
+      }
+
+      const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+      usuario.password = hashedPassword;
+
+      await this.mailService.sendEmailConfirm(email, nuevaContrasena);
+      await this.userRepository.save(usuario);
+      return 'Contraseña actualizada exitosamente';
+    } catch (error) {
+      throw error;
     }
-
-    const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
-    usuario.password = hashedPassword;
-
-    await this.mailService.sendEmailConfirm(email, nuevaContrasena);
-    await this.userRepository.save(usuario);
-    return 'Contraseña actualizada exitosamente';
   }
 
   async getUsers(paginationDto: PaginationDto) {

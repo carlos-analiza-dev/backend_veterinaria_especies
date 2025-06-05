@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { PaisModule } from './pais/pais.module';
 import { MailModule } from './mail/mail.module';
 import { CommonModule } from './common/common.module';
+import { DepartamentosPaisModule } from './departamentos_pais/departamentos_pais.module';
+import { MunicipiosDepartamentosPaisModule } from './municipios_departamentos_pais/municipios_departamentos_pais.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { CommonModule } from './common/common.module';
     PaisModule,
     MailModule,
     CommonModule,
+    DepartamentosPaisModule,
+    MunicipiosDepartamentosPaisModule,
   ],
   controllers: [],
   providers: [],

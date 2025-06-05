@@ -1,5 +1,7 @@
 import { Exclude } from 'class-transformer';
+import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { UserRole } from 'src/interfaces/user.role.interface';
+import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -38,6 +40,18 @@ export class User {
 
   @ManyToOne(() => Pai, (pais) => pais.usuario, { eager: true })
   pais: Pai;
+
+  @ManyToOne(() => DepartamentosPai, (departamento) => departamento.usuarios, {
+    eager: true,
+  })
+  departamento: DepartamentosPai;
+
+  @ManyToOne(
+    () => MunicipiosDepartamentosPai,
+    (municipio) => municipio.usuarios,
+    { eager: true },
+  )
+  municipio: MunicipiosDepartamentosPai;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -12,14 +12,29 @@ export class PaisService {
     private readonly paisRepo: Repository<Pai>,
   ) {}
   async create(createPaiDto: CreatePaiDto) {
-    const { nombre, code } = createPaiDto;
+    try {
+      const {
+        nombre,
+        code,
+        code_phone,
+        nombre_documento,
+        nombre_moneda,
+        simbolo_moneda,
+      } = createPaiDto;
 
-    const pais = this.paisRepo.create({
-      nombre,
-      code,
-    });
-    await this.paisRepo.save(pais);
-    return 'Pais Creado Exitosamente';
+      const pais = this.paisRepo.create({
+        nombre,
+        code,
+        code_phone,
+        nombre_documento,
+        nombre_moneda,
+        simbolo_moneda,
+      });
+      await this.paisRepo.save(pais);
+      return 'Pais Creado Exitosamente';
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findAll() {

@@ -1,4 +1,5 @@
 import { User } from 'src/auth/entities/auth.entity';
+import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('pais')
@@ -12,8 +13,25 @@ export class Pai {
   @Column({ type: 'text', unique: true })
   code: string;
 
+  @Column({ type: 'text' })
+  code_phone: string;
+
+  @Column({ type: 'text' })
+  nombre_moneda: string;
+
+  @Column({ type: 'text' })
+  simbolo_moneda: string;
+
+  @Column({ type: 'text' })
+  nombre_documento: string;
+
   @OneToMany(() => User, (usuario) => usuario.pais)
   usuario: User[];
+
+  @OneToMany(() => DepartamentosPai, (departamento) => departamento.pais, {
+    eager: true,
+  })
+  departamentos: DepartamentosPai[];
 
   @Column({ type: 'bool', default: true })
   isActive: boolean;

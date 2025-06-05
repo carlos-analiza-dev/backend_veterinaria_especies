@@ -9,6 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { Pai } from 'src/pais/entities/pai.entity';
 import { MailService } from 'src/mail/mail.service';
+import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
+import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 
 @Module({
   controllers: [AuthController],
@@ -16,7 +18,12 @@ import { MailService } from 'src/mail/mail.service';
   exports: [TypeOrmModule, JwtModule, PassportModule, JwtStrategy],
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([User, Pai]),
+    TypeOrmModule.forFeature([
+      User,
+      Pai,
+      DepartamentosPai,
+      MunicipiosDepartamentosPai,
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

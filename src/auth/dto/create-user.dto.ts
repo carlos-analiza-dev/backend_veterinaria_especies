@@ -58,6 +58,14 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'El pais es obligatorio' })
   pais: string;
 
+  @IsString()
+  @IsNotEmpty({ message: 'El departamento es obligatorio' })
+  departamento: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'El municipio es obligatorio' })
+  municipio: string;
+
   @IsOptional()
   @IsString()
   rol?: UserRole;
