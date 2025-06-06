@@ -1,5 +1,6 @@
 import { User } from 'src/auth/entities/auth.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
+import { ServiciosPai } from 'src/servicios_pais/entities/servicios_pai.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('pais')
@@ -27,6 +28,9 @@ export class Pai {
 
   @OneToMany(() => User, (usuario) => usuario.pais)
   usuario: User[];
+
+  @OneToMany(() => ServiciosPai, (precio) => precio.pais)
+  preciosServicios: ServiciosPai[];
 
   @OneToMany(() => DepartamentosPai, (departamento) => departamento.pais, {
     eager: true,

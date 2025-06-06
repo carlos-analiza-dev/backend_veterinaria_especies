@@ -7,6 +7,8 @@ import { MailModule } from './mail/mail.module';
 import { CommonModule } from './common/common.module';
 import { DepartamentosPaisModule } from './departamentos_pais/departamentos_pais.module';
 import { MunicipiosDepartamentosPaisModule } from './municipios_departamentos_pais/municipios_departamentos_pais.module';
+import { ServiciosPaisModule } from './servicios_pais/servicios_pais.module';
+import { ServiciosModule } from './servicios/servicios.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { MunicipiosDepartamentosPaisModule } from './municipios_departamentos_pa
     CommonModule,
     DepartamentosPaisModule,
     MunicipiosDepartamentosPaisModule,
+    ServiciosPaisModule,
+    ServiciosModule,
   ],
   controllers: [],
   providers: [],
