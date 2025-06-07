@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateServicioDto {
   @IsString()
@@ -8,4 +8,8 @@ export class CreateServicioDto {
   @IsString()
   @IsNotEmpty({ message: 'La descrcipcion es obligatoria' })
   descripcion: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }

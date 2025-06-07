@@ -12,6 +12,9 @@ export class Servicio {
   @Column({ nullable: true })
   descripcion: string;
 
+  @Column({ type: 'bool', default: true })
+  isActive: boolean;
+
   @OneToMany(() => ServiciosPai, (precio) => precio.servicio, { eager: true })
   preciosPorPais: ServiciosPai[];
 }
