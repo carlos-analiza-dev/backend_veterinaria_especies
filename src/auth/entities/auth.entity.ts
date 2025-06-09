@@ -1,9 +1,15 @@
 import { Exclude } from 'class-transformer';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
-import { UserRole } from 'src/interfaces/user.role.interface';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Role } from 'src/roles/entities/role.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -29,8 +35,9 @@ export class User {
   @Column('text', { unique: true })
   telefono: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-  rol: UserRole;
+  @ManyToOne(() => Role, { eager: true })
+  @JoinColumn({ name: 'roleId' })
+  role: Role;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;

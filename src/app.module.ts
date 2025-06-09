@@ -9,6 +9,8 @@ import { DepartamentosPaisModule } from './departamentos_pais/departamentos_pais
 import { MunicipiosDepartamentosPaisModule } from './municipios_departamentos_pais/municipios_departamentos_pais.module';
 import { ServiciosPaisModule } from './servicios_pais/servicios_pais.module';
 import { ServiciosModule } from './servicios/servicios.module';
+import { RolesModule } from './roles/roles.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { ServiciosModule } from './servicios/servicios.module';
     MunicipiosDepartamentosPaisModule,
     ServiciosPaisModule,
     ServiciosModule,
+    RolesModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],

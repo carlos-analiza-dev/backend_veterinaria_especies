@@ -50,6 +50,12 @@ export class AuthController {
     return this.authService.getUsers(paginationDto);
   }
 
+  @Get('veterinarios')
+  @Auth()
+  getVeterinarios() {
+    return this.authService.getVeterinarios();
+  }
+
   @Get('user/:userId')
   @Auth()
   getUserById(@Param('userId') userId: string) {

@@ -67,8 +67,8 @@ export class CreateUserDto {
   municipio: string;
 
   @IsOptional()
-  @IsString()
-  rol?: UserRole;
+  @IsUUID()
+  role?: string;
 
   @IsOptional()
   @IsBoolean()

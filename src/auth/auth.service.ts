@@ -21,6 +21,7 @@ import { instanceToPlain } from 'class-transformer';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
+import { Role } from 'src/roles/entities/role.entity';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +32,8 @@ export class AuthService {
     private readonly municipioRepo: Repository<MunicipiosDepartamentosPai>,
     @InjectRepository(DepartamentosPai)
     private readonly departamentoRepo: Repository<DepartamentosPai>,
+    @InjectRepository(Role)
+    private readonly rolRepo: Repository<Role>,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
   ) {}
@@ -45,7 +48,7 @@ export class AuthService {
       pais: paisId,
       departamento: departamentoId,
       municipio: municipioId,
-      rol,
+      role,
     } = createUserDto;
 
     const pais_existe = await this.paisRepo.findOne({ where: { id: paisId } });
@@ -71,6 +74,23 @@ export class AuthService {
       );
     }
 
+    let rol_exits;
+    if (role) {
+      rol_exits = await this.rolRepo.findOne({ where: { id: role } });
+      if (!rol_exits) {
+        throw new NotFoundException(
+          'El rol seleccionado no se encontró en la base de datos',
+        );
+      }
+    } else {
+      rol_exits = await this.rolRepo.findOne({ where: { name: 'User' } });
+      if (!rol_exits) {
+        throw new NotFoundException(
+          'El rol User no está configurado en el sistema',
+        );
+      }
+    }
+
     try {
       const user = this.userRepository.create({
         email,
@@ -79,10 +99,12 @@ export class AuthService {
         direccion,
         identificacion,
         telefono,
-        rol,
         pais: pais_existe,
         departamento: departamento_existe,
         municipio: municipio_existe,
+        role: rol_exits,
+        isActive: true,
+        isAuthorized: false,
       });
 
       await this.userRepository.save(user);
@@ -152,33 +174,56 @@ export class AuthService {
   async getUsers(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0, name, rol } = paginationDto;
     try {
-      const whereConditions: any = {};
+      const queryBuilder = this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.role', 'role')
+        .where('user.isActive = :isActive', { isActive: true });
 
       if (name) {
-        whereConditions.name = ILike(`%${name}%`);
+        queryBuilder.andWhere('user.name ILIKE :name', { name: `%${name}%` });
       }
 
       if (rol) {
-        whereConditions.rol = rol;
+        queryBuilder.andWhere('role.name ILIKE :rol', { rol: `%${rol}%` });
       }
 
-      const [usuarios, total] = await this.userRepository.findAndCount({
-        where: whereConditions,
-        skip: offset,
-        take: limit,
-        order: {
-          name: 'ASC',
-        },
-      });
+      const [usuarios, total] = await queryBuilder
+        .orderBy('user.name', 'ASC')
+        .skip(offset)
+        .take(limit)
+        .getManyAndCount();
+
       if (!usuarios || usuarios.length === 0) {
         throw new NotFoundException(
-          'No se encontraron usuario en este momento.',
+          'No se encontraron usuarios en este momento.',
         );
       }
 
       const users = instanceToPlain(usuarios);
-
       return { users, total };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getVeterinarios() {
+    try {
+      const veterinarios = await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.role', 'role')
+        .where('user.isActive = :isActive', { isActive: true })
+        .andWhere('role.name = :roleName', { roleName: 'Veterinario' })
+        .orderBy('user.name', 'ASC')
+        .getMany();
+
+      if (!veterinarios || veterinarios.length === 0) {
+        throw new NotFoundException(
+          'No se encontraron usuarios con rol de veterinario.',
+        );
+      }
+
+      const users = instanceToPlain(veterinarios);
+      return users;
     } catch (error) {
       throw error;
     }
@@ -201,7 +246,7 @@ export class AuthService {
     try {
       const usuario = await this.userRepository.findOne({
         where: { id: userId },
-        relations: ['pais'],
+        relations: ['pais', 'role'],
       });
 
       if (!usuario) {
@@ -212,10 +257,18 @@ export class AuthService {
         const pais = await this.paisRepo.findOne({
           where: { id: updateUsuarioDto.pais },
         });
-        if (!pais) {
+        if (!pais)
           throw new BadRequestException('El país seleccionado no existe');
-        }
-        usuario.pais.id = pais.id;
+        usuario.pais = pais;
+      }
+
+      if (updateUsuarioDto.role) {
+        const nuevoRol = await this.rolRepo.findOne({
+          where: { id: updateUsuarioDto.role },
+        });
+        if (!nuevoRol)
+          throw new NotFoundException('El rol proporcionado no existe');
+        usuario.role = nuevoRol;
       }
 
       const camposActualizables = [
@@ -224,7 +277,6 @@ export class AuthService {
         'identificacion',
         'direccion',
         'telefono',
-        'rol',
         'isActive',
         'isAuthorized',
       ];
