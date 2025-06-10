@@ -1,5 +1,6 @@
 import { User } from 'src/auth/entities/auth.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
+import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import {
   Column,
   Entity,
@@ -25,6 +26,9 @@ export class MunicipiosDepartamentosPai {
     { onDelete: 'CASCADE' },
   )
   departamento: DepartamentosPai;
+
+  @OneToMany(() => FincasGanadero, (fincas) => fincas.departamento)
+  fincas: FincasGanadero[];
 
   @OneToMany(() => User, (usuario) => usuario.municipio)
   usuarios: User[];

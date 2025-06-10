@@ -11,6 +11,7 @@ import { ServiciosPaisModule } from './servicios_pais/servicios_pais.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import { RolesModule } from './roles/roles.module';
 import { SeedModule } from './seed/seed.module';
+import { FincasGanaderoModule } from './fincas_ganadero/fincas_ganadero.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SeedModule } from './seed/seed.module';
     ServiciosModule,
     RolesModule,
     SeedModule,
+    FincasGanaderoModule,
   ],
   controllers: [],
   providers: [],

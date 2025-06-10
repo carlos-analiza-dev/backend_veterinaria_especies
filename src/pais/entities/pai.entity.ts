@@ -1,5 +1,6 @@
 import { User } from 'src/auth/entities/auth.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
+import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { ServiciosPai } from 'src/servicios_pais/entities/servicios_pai.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -36,6 +37,9 @@ export class Pai {
     eager: true,
   })
   departamentos: DepartamentosPai[];
+
+  @OneToMany(() => FincasGanadero, (fincas) => fincas.propietario)
+  fincas: FincasGanadero[];
 
   @Column({ type: 'bool', default: true })
   isActive: boolean;

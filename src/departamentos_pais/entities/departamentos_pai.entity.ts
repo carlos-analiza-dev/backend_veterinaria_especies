@@ -1,4 +1,5 @@
 import { User } from 'src/auth/entities/auth.entity';
+import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
 import {
@@ -29,6 +30,9 @@ export class DepartamentosPai {
     { cascade: true, eager: true },
   )
   municipios: MunicipiosDepartamentosPai[];
+
+  @OneToMany(() => FincasGanadero, (fincas) => fincas.departamento)
+  fincas: FincasGanadero[];
 
   @OneToMany(() => User, (usuario) => usuario.departamento)
   usuarios: User[];

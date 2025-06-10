@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
+import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
 import { Role } from 'src/roles/entities/role.entity';
@@ -8,6 +9,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -59,6 +61,9 @@ export class User {
     { eager: true },
   )
   municipio: MunicipiosDepartamentosPai;
+
+  @OneToMany(() => FincasGanadero, (fincas) => fincas.propietario)
+  fincas: FincasGanadero[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
