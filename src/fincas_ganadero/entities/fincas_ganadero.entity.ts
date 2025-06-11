@@ -1,3 +1,4 @@
+import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 import { User } from 'src/auth/entities/auth.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
@@ -8,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity('finca_ganadero')
@@ -42,8 +44,8 @@ export class FincasGanadero {
   @Column({ type: 'varchar', nullable: true })
   tipo_explotacion: string;
 
-  @Column({ type: 'text', array: true, nullable: true })
-  especies_maneja: string[];
+  @Column({ type: 'jsonb', nullable: true })
+  especies_maneja: { especie: string; cantidad: number }[];
 
   @CreateDateColumn()
   fecha_registro: Date;
@@ -56,4 +58,7 @@ export class FincasGanadero {
 
   @ManyToOne(() => Pai, (pais) => pais.fincas)
   pais_id: Pai;
+
+  @OneToMany(() => AnimalFinca, (animal) => animal.finca)
+  animales: AnimalFinca[];
 }

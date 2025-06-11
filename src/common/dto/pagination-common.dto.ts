@@ -18,4 +18,8 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   rol?: string;
+
+  @IsOptional()
+  @IsString()
+  fincaId?: string;
 }

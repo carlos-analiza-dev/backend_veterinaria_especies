@@ -9,6 +9,7 @@ import { Pai } from 'src/pais/entities/pai.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class FincasGanaderoService {
@@ -70,11 +71,7 @@ export class FincasGanaderoService {
         area_ganaderia,
         tamaño_total,
         tipo_explotacion,
-        especies_maneja:
-          typeof especies_maneja === 'string'
-            ? (especies_maneja as string).split(',').map((e) => e.trim())
-            : especies_maneja,
-
+        especies_maneja,
         ubicacion,
         propietario: propietario,
         pais_id: pais,
@@ -110,8 +107,10 @@ export class FincasGanaderoService {
         order: { fecha_registro: 'DESC' },
       });
 
+      const fincas_propietario = instanceToPlain(fincas);
+
       return {
-        fincas,
+        fincas: fincas_propietario,
         total,
       };
     } catch (error) {

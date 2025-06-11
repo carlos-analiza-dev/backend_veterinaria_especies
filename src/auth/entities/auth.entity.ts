@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
@@ -64,6 +65,9 @@ export class User {
 
   @OneToMany(() => FincasGanadero, (fincas) => fincas.propietario)
   fincas: FincasGanadero[];
+
+  @OneToMany(() => AnimalFinca, (animal) => animal.propietario)
+  animales: AnimalFinca[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

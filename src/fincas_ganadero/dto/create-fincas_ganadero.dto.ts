@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsOptional,
@@ -6,7 +7,19 @@ import {
   IsBoolean,
   Length,
   IsArray,
+  ValidateNested,
+  Min,
 } from 'class-validator';
+
+export class EspecieCantidadDto {
+  @IsString()
+  @Length(1, 100)
+  especie: string;
+
+  @IsInt()
+  @Min(1, { message: 'La cantidad debe ser mayor o igual a 1' })
+  cantidad: number;
+}
 
 export class CreateFincasGanaderoDto {
   @IsString()
@@ -46,10 +59,10 @@ export class CreateFincasGanaderoDto {
   @IsString()
   tipo_explotacion?: string;
 
-  @IsOptional()
   @IsArray()
-  @IsString({ each: true })
-  especies_maneja?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => EspecieCantidadDto)
+  especies_maneja: EspecieCantidadDto[];
 
   @IsUUID()
   propietario_id: string;
