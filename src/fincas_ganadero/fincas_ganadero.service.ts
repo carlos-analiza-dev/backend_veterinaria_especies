@@ -30,8 +30,8 @@ export class FincasGanaderoService {
       nombre_finca,
       cantidad_animales,
       abreviatura,
-      area_ganaderia,
-      tamaño_total,
+      area_ganaderia_hectarea,
+      tamaño_total_hectarea,
       tipo_explotacion,
       ubicacion,
       especies_maneja,
@@ -68,8 +68,8 @@ export class FincasGanaderoService {
         nombre_finca,
         cantidad_animales,
         abreviatura,
-        area_ganaderia,
-        tamaño_total,
+        area_ganaderia_hectarea,
+        tamaño_total_hectarea,
         tipo_explotacion,
         especies_maneja,
         ubicacion,
@@ -118,12 +118,101 @@ export class FincasGanaderoService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} fincasGanadero`;
+  async findOne(id: string) {
+    try {
+      const finca = await this.fincasRepo.findOne({ where: { id } });
+      if (!finca)
+        throw new NotFoundException('No se encontro la finca seleccionada');
+      return finca;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  update(id: number, updateFincasGanaderoDto: UpdateFincasGanaderoDto) {
-    return `This action updates a #${id} fincasGanadero`;
+  async update(id: string, updateFincasGanaderoDto: UpdateFincasGanaderoDto) {
+    const {
+      nombre_finca,
+      cantidad_animales,
+      abreviatura,
+      area_ganaderia_hectarea,
+      tamaño_total_hectarea,
+      tipo_explotacion,
+      ubicacion,
+      especies_maneja,
+      propietario_id,
+      departamentoId,
+      municipioId,
+      pais_id,
+    } = updateFincasGanaderoDto;
+
+    try {
+      const finca = await this.fincasRepo.findOne({
+        where: { id },
+        relations: ['propietario', 'departamento', 'municipio', 'pais_id'],
+      });
+
+      if (!finca) {
+        throw new NotFoundException('No se encontró la finca a actualizar');
+      }
+
+      if (propietario_id) {
+        const propietario = await this.userRepo.findOneBy({
+          id: propietario_id,
+        });
+        if (!propietario) {
+          throw new NotFoundException('El propietario no existe');
+        }
+        finca.propietario = propietario;
+      }
+
+      if (departamentoId) {
+        const departamento = await this.deptoRepo.findOneBy({
+          id: departamentoId,
+        });
+        if (!departamento) {
+          throw new NotFoundException('El departamento no existe');
+        }
+        finca.departamento = departamento;
+      }
+
+      if (municipioId) {
+        const municipio = await this.municipioRepo.findOneBy({
+          id: municipioId,
+        });
+        if (!municipio) {
+          throw new NotFoundException('El municipio no existe');
+        }
+        finca.municipio = municipio;
+      }
+
+      if (pais_id) {
+        const pais = await this.paisRepo.findOneBy({ id: pais_id });
+        if (!pais) {
+          throw new NotFoundException('El país no existe');
+        }
+        finca.pais_id = pais;
+      }
+
+      finca.nombre_finca = nombre_finca ?? finca.nombre_finca;
+      finca.cantidad_animales = cantidad_animales ?? finca.cantidad_animales;
+      finca.abreviatura = abreviatura ?? finca.abreviatura;
+      finca.area_ganaderia_hectarea =
+        area_ganaderia_hectarea ?? finca.area_ganaderia_hectarea;
+      finca.tamaño_total_hectarea =
+        tamaño_total_hectarea ?? finca.tamaño_total_hectarea;
+      finca.tipo_explotacion = tipo_explotacion ?? finca.tipo_explotacion;
+      finca.ubicacion = ubicacion ?? finca.ubicacion;
+      finca.especies_maneja = especies_maneja ?? finca.especies_maneja;
+
+      await this.fincasRepo.save(finca);
+
+      return {
+        message: 'Finca actualizada exitosamente',
+        data: finca,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   remove(id: number) {

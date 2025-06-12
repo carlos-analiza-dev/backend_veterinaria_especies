@@ -29,7 +29,7 @@ export class FincasGanaderoController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.fincasGanaderoService.findOne(+id);
+    return this.fincasGanaderoService.findOne(id);
   }
 
   @Patch(':id')
@@ -37,7 +37,7 @@ export class FincasGanaderoController {
     @Param('id') id: string,
     @Body() updateFincasGanaderoDto: UpdateFincasGanaderoDto,
   ) {
-    return this.fincasGanaderoService.update(+id, updateFincasGanaderoDto);
+    return this.fincasGanaderoService.update(id, updateFincasGanaderoDto);
   }
 
   @Delete(':id')

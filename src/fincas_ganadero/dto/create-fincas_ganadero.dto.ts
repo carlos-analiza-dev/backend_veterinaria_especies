@@ -48,12 +48,12 @@ export class CreateFincasGanaderoDto {
   @IsOptional()
   @IsString()
   @Length(0, 255)
-  tamaño_total?: string;
+  tamaño_total_hectarea?: string;
 
   @IsOptional()
   @IsString()
   @Length(0, 255)
-  area_ganaderia?: string;
+  area_ganaderia_hectarea?: string;
 
   @IsOptional()
   @IsString()

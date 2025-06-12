@@ -36,10 +36,10 @@ export class FincasGanadero {
   municipio: MunicipiosDepartamentosPai;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  tamaño_total: string;
+  tamaño_total_hectarea: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  area_ganaderia: string;
+  area_ganaderia_hectarea: string;
 
   @Column({ type: 'varchar', nullable: true })
   tipo_explotacion: string;
