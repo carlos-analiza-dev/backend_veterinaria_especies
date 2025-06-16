@@ -8,6 +8,8 @@ import { User } from 'src/auth/entities/auth.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
+import { EspecieAnimal } from 'src/especie_animal/entities/especie_animal.entity';
+import { RazaAnimal } from 'src/raza_animal/entities/raza_animal.entity';
 
 @Injectable()
 export class SeedService {
@@ -22,6 +24,10 @@ export class SeedService {
     private readonly departamentoRepository: Repository<DepartamentosPai>,
     @InjectRepository(MunicipiosDepartamentosPai)
     private readonly municipioRepository: Repository<MunicipiosDepartamentosPai>,
+    @InjectRepository(EspecieAnimal)
+    private readonly especieRepository: Repository<EspecieAnimal>,
+    @InjectRepository(RazaAnimal)
+    private readonly razaRepository: Repository<RazaAnimal>,
     private readonly configService: ConfigService,
   ) {}
 
@@ -33,6 +39,7 @@ export class SeedService {
     );
     const tegucigalpa = await this.createMunicipioTegucigalpa(franciscoMorazan);
     await this.createAdminUser(honduras, franciscoMorazan, tegucigalpa);
+    await this.createEspeciesAndRazas();
     return { message: 'Semilla ejecutada correctamente' };
   }
 
@@ -142,7 +149,7 @@ export class SeedService {
       const adminUser = this.userRepository.create({
         email: adminEmail,
         password: bcrypt.hashSync(adminPassword, 10),
-        name: 'Administrador',
+        name: 'Carlos Eduardo Alcerro Lainez',
         direccion: 'Tegucigalpa, Honduras',
         telefono: '8770-9116',
         identificacion: '1201-2000-00131',
@@ -155,6 +162,87 @@ export class SeedService {
       });
 
       await this.userRepository.save(adminUser);
+    }
+  }
+  private async createEspeciesAndRazas() {
+    const especiesData = [
+      { nombre: 'Bovino' },
+      { nombre: 'Equino' },
+      { nombre: 'Porcino' },
+      { nombre: 'Avícola' },
+      { nombre: 'Caprino' },
+    ];
+
+    const razasPorEspecie = {
+      Bovino: [
+        'Brahman',
+        'Holstein',
+        'Angus',
+        'Hereford',
+        'Gyr',
+        'Nelore',
+        'Pardo Suizo',
+      ],
+      Equino: [
+        'Pura Sangre',
+        'Cuarto de Milla',
+        'Árabe',
+        'Appaloosa',
+        'Pinto',
+        'Percherón',
+      ],
+      Porcino: [
+        'Landrace',
+        'Yorkshire',
+        'Duroc',
+        'Hampshire',
+        'Pietrain',
+        'Berkshire',
+      ],
+      Avícola: [
+        'Plymouth Rock',
+        'Rhode Island Red',
+        'Leghorn',
+        'Sussex',
+        'Orpington',
+        'Brahma',
+      ],
+      Caprino: ['Saanen', 'Alpina', 'Nubia', 'Boer', 'Toggenburg', 'LaMancha'],
+    };
+
+    for (const especieData of especiesData) {
+      const existingEspecie = await this.especieRepository.findOne({
+        where: { nombre: especieData.nombre },
+      });
+
+      if (!existingEspecie) {
+        const newEspecie = this.especieRepository.create(especieData);
+        await this.especieRepository.save(newEspecie);
+      }
+    }
+
+    for (const [especieNombre, razas] of Object.entries(razasPorEspecie)) {
+      const especie = await this.especieRepository.findOne({
+        where: { nombre: especieNombre },
+      });
+
+      if (especie) {
+        for (const razaNombre of razas) {
+          const existingRaza = await this.razaRepository.findOne({
+            where: { nombre: razaNombre, especie: { id: especie.id } },
+            relations: ['especie'],
+          });
+
+          if (!existingRaza) {
+            const newRaza = this.razaRepository.create({
+              nombre: razaNombre,
+              especie: especie,
+              isActive: true,
+            });
+            await this.razaRepository.save(newRaza);
+          }
+        }
+      }
     }
   }
 }

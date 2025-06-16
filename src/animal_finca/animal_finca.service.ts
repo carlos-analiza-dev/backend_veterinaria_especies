@@ -12,6 +12,8 @@ import { User } from 'src/auth/entities/auth.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
 import { instanceToPlain } from 'class-transformer';
+import { EspecieAnimal } from 'src/especie_animal/entities/especie_animal.entity';
+import { RazaAnimal } from 'src/raza_animal/entities/raza_animal.entity';
 
 @Injectable()
 export class AnimalFincaService {
@@ -22,6 +24,10 @@ export class AnimalFincaService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(FincasGanadero)
     private readonly fincaRepo: Repository<FincasGanadero>,
+    @InjectRepository(EspecieAnimal)
+    private readonly especieAnimal: Repository<EspecieAnimal>,
+    @InjectRepository(RazaAnimal)
+    private readonly razaAnimal: Repository<RazaAnimal>,
   ) {}
   async create(createAnimalFincaDto: CreateAnimalFincaDto) {
     const {
@@ -35,6 +41,9 @@ export class AnimalFincaService {
       edad_promedio,
       fecha_nacimiento,
       observaciones,
+      tipo_alimentacion,
+      castrado,
+      esterelizado,
     } = createAnimalFincaDto;
 
     try {
@@ -48,17 +57,32 @@ export class AnimalFincaService {
         throw new NotFoundException(`Finca no encontrada`);
       }
 
+      const especie_animal = await this.especieAnimal.findOneBy({
+        id: especie,
+      });
+      if (!especie_animal) {
+        throw new NotFoundException(`Especie no encontrada`);
+      }
+
+      const raza_animal = await this.razaAnimal.findOneBy({ id: raza });
+      if (!raza_animal) {
+        throw new NotFoundException(`Raza no encontrada`);
+      }
+
       const nuevoAnimal = this.animalRepo.create({
         color,
-        especie,
+        especie: especie_animal,
         identificador,
-        raza,
+        raza: raza_animal,
         sexo,
         edad_promedio,
         fecha_nacimiento,
         observaciones,
         propietario,
         finca,
+        castrado,
+        esterelizado,
+        tipo_alimentacion,
       });
 
       await this.animalRepo.save(nuevoAnimal);
@@ -70,7 +94,7 @@ export class AnimalFincaService {
   }
 
   async findAll(propietarioId: string, paginationDto: PaginationDto) {
-    const { fincaId } = paginationDto;
+    const { fincaId, identificador } = paginationDto;
 
     try {
       const propietario = await this.userRepo.findOne({
@@ -91,6 +115,12 @@ export class AnimalFincaService {
 
       if (fincaId) {
         query.andWhere('animal.finca = :fincaId', { fincaId });
+      }
+
+      if (identificador && identificador.trim() !== '') {
+        query.andWhere('LOWER(animal.identificador) LIKE :identificador', {
+          identificador: `%${identificador.toLowerCase()}%`,
+        });
       }
 
       const animales = await query.getMany();

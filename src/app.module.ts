@@ -13,6 +13,8 @@ import { RolesModule } from './roles/roles.module';
 import { SeedModule } from './seed/seed.module';
 import { FincasGanaderoModule } from './fincas_ganadero/fincas_ganadero.module';
 import { AnimalFincaModule } from './animal_finca/animal_finca.module';
+import { EspecieAnimalModule } from './especie_animal/especie_animal.module';
+import { RazaAnimalModule } from './raza_animal/raza_animal.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { AnimalFincaModule } from './animal_finca/animal_finca.module';
     SeedModule,
     FincasGanaderoModule,
     AnimalFincaModule,
+    EspecieAnimalModule,
+    RazaAnimalModule,
   ],
   controllers: [],
   providers: [],

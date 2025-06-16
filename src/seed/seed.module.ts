@@ -8,6 +8,8 @@ import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
 import { ConfigModule } from '@nestjs/config';
+import { RazaAnimal } from 'src/raza_animal/entities/raza_animal.entity';
+import { EspecieAnimal } from 'src/especie_animal/entities/especie_animal.entity';
 
 @Module({
   controllers: [SeedController],
@@ -19,6 +21,8 @@ import { ConfigModule } from '@nestjs/config';
       DepartamentosPai,
       MunicipiosDepartamentosPai,
       Pai,
+      RazaAnimal,
+      EspecieAnimal,
     ]),
   ],
   providers: [SeedService],

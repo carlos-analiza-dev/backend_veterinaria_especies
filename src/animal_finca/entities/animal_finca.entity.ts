@@ -1,5 +1,7 @@
 import { User } from 'src/auth/entities/auth.entity';
+import { EspecieAnimal } from 'src/especie_animal/entities/especie_animal.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
+import { RazaAnimal } from 'src/raza_animal/entities/raza_animal.entity';
 import {
   Column,
   CreateDateColumn,
@@ -13,8 +15,8 @@ export class AnimalFinca {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  especie: string;
+  @ManyToOne(() => EspecieAnimal, { eager: true })
+  especie: EspecieAnimal;
 
   @Column({ type: 'varchar', length: 100 })
   sexo: string;
@@ -25,17 +27,20 @@ export class AnimalFinca {
   @Column({ type: 'varchar', length: 100, unique: true })
   identificador: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  raza: string;
+  @ManyToOne(() => RazaAnimal, (raza) => raza.animales, { eager: true })
+  raza: RazaAnimal;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  edad_promedio: string;
+  @Column({ type: 'decimal', nullable: true })
+  edad_promedio: number;
 
   @Column({ type: 'date', nullable: true })
   fecha_nacimiento: Date;
 
   @Column({ type: 'text', nullable: true })
   observaciones: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  tipo_alimentacion: { alimento: string }[];
 
   @CreateDateColumn()
   fecha_registro: Date;
@@ -47,4 +52,10 @@ export class AnimalFinca {
     onDelete: 'CASCADE',
   })
   finca: FincasGanadero;
+
+  @Column({ type: 'boolean', default: false })
+  castrado: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  esterelizado: boolean;
 }

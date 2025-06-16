@@ -22,4 +22,8 @@ export class PaginationDto {
   @IsOptional()
   @IsString()
   fincaId?: string;
+
+  @IsOptional()
+  @IsString()
+  identificador?: string;
 }
