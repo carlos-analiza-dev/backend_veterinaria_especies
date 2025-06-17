@@ -46,7 +46,7 @@ export class SeedService {
   private async createRoles() {
     const rolesData = [
       { name: 'Administrador', description: 'Administrador del sistema' },
-      { name: 'User', description: 'Usuario regular' },
+      { name: 'Ganadero', description: 'Usuario ganadero' },
       {
         name: 'Veterinario',
         description: 'Veterinario Laboratorios Centroamericanos',
@@ -151,7 +151,7 @@ export class SeedService {
         password: bcrypt.hashSync(adminPassword, 10),
         name: 'Carlos Eduardo Alcerro Lainez',
         direccion: 'Tegucigalpa, Honduras',
-        telefono: '8770-9116',
+        telefono: '+504 8770-9116',
         identificacion: '1201-2000-00131',
         role: adminRole,
         isActive: true,
@@ -175,39 +175,58 @@ export class SeedService {
 
     const razasPorEspecie = {
       Bovino: [
-        'Brahman',
-        'Holstein',
-        'Angus',
-        'Hereford',
-        'Gyr',
-        'Nelore',
-        'Pardo Suizo',
+        { nombre: 'Holstein', abreviatura: 'HOL' },
+        { nombre: 'Jersey', abreviatura: 'JER' },
+        { nombre: 'Charolais', abreviatura: 'CHA' },
+        { nombre: 'Brahman', abreviatura: 'BRH' },
+        { nombre: 'Beef Master', abreviatura: 'BFM' },
+        { nombre: 'Brangus', abreviatura: 'BRG' },
+        { nombre: 'Pardo Suizo', abreviatura: 'PSZ' },
+        { nombre: 'Gyr', abreviatura: 'GYR' },
+        { nombre: 'Hereford', abreviatura: 'HER' },
+        { nombre: 'Santa Gertrudis', abreviatura: 'SGT' },
+        { nombre: 'Angus', abreviatura: 'ANG' },
+        { nombre: 'Simmental', abreviatura: 'SIM' },
+        { nombre: 'Senepol', abreviatura: 'SNP' },
+        { nombre: 'Cruzamiento con Cebú', abreviatura: 'CCC' },
       ],
       Equino: [
-        'Pura Sangre',
-        'Cuarto de Milla',
-        'Árabe',
-        'Appaloosa',
-        'Pinto',
-        'Percherón',
+        { nombre: 'Caballo Español', abreviatura: 'ESP' },
+        { nombre: 'Caballo Peruano', abreviatura: 'PER' },
+        { nombre: 'Ibero', abreviatura: 'IBO' },
+        { nombre: 'Cuarto de Milla', abreviatura: 'CDM' },
+        { nombre: 'Árabe', abreviatura: 'ARA' },
+        { nombre: 'Barroco', abreviatura: 'BAR' },
+        { nombre: 'Frisón', abreviatura: 'FRI' },
+        { nombre: 'Gypsy Vanner', abreviatura: 'GYP' },
+        { nombre: 'Pura Sangre Inglés', abreviatura: 'PSI' },
+        { nombre: 'Pony de Shetland', abreviatura: 'PSH' },
       ],
       Porcino: [
-        'Landrace',
-        'Yorkshire',
-        'Duroc',
-        'Hampshire',
-        'Pietrain',
-        'Berkshire',
+        { nombre: 'Landrace', abreviatura: 'LAN' },
+        { nombre: 'Duroc', abreviatura: 'DUR' },
+        { nombre: 'Hampshire', abreviatura: 'HAM' },
+        { nombre: 'Large White', abreviatura: 'LW' },
+        { nombre: 'Pietrain', abreviatura: 'PIE' },
       ],
       Avícola: [
-        'Plymouth Rock',
-        'Rhode Island Red',
-        'Leghorn',
-        'Sussex',
-        'Orpington',
-        'Brahma',
+        { nombre: 'Postura', abreviatura: 'POS' },
+        { nombre: 'Rhode Island Red', abreviatura: 'RIR' },
+        { nombre: 'Highline Brown', abreviatura: 'HLB' },
+        { nombre: 'Plymouth Rock', abreviatura: 'PRK' },
+        { nombre: 'Orpington', abreviatura: 'ORP' },
+        { nombre: 'Sussex', abreviatura: 'SUS' },
+        { nombre: 'Leghorn', abreviatura: 'LGH' },
+        { nombre: 'Cobb 500', abreviatura: 'C500' },
+        { nombre: 'Ross 308', abreviatura: 'R308' },
       ],
-      Caprino: ['Saanen', 'Alpina', 'Nubia', 'Boer', 'Toggenburg', 'LaMancha'],
+      Caprino: [
+        { nombre: 'Dorper', abreviatura: 'DOR' },
+        { nombre: 'Boer', abreviatura: 'BOE' },
+        { nombre: 'Española', abreviatura: 'ESP' },
+        { nombre: 'Nubia', abreviatura: 'NUB' },
+        { nombre: 'Saanen', abreviatura: 'SAA' },
+      ],
     };
 
     for (const especieData of especiesData) {
@@ -227,19 +246,26 @@ export class SeedService {
       });
 
       if (especie) {
-        for (const razaNombre of razas) {
+        for (const razaData of razas) {
           const existingRaza = await this.razaRepository.findOne({
-            where: { nombre: razaNombre, especie: { id: especie.id } },
+            where: {
+              nombre: razaData.nombre,
+              especie: { id: especie.id },
+            },
             relations: ['especie'],
           });
 
           if (!existingRaza) {
             const newRaza = this.razaRepository.create({
-              nombre: razaNombre,
+              nombre: razaData.nombre,
+              abreviatura: razaData.abreviatura,
               especie: especie,
               isActive: true,
             });
             await this.razaRepository.save(newRaza);
+          } else if (!existingRaza.abreviatura) {
+            existingRaza.abreviatura = razaData.abreviatura;
+            await this.razaRepository.save(existingRaza);
           }
         }
       }

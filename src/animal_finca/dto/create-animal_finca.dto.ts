@@ -9,6 +9,7 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -20,60 +21,63 @@ export class AlimentacionDto {
 }
 
 export class CreateAnimalFincaDto {
-  @IsString({ message: 'La especie del animal es obligatoria' })
-  @IsUUID()
-  @IsNotEmpty({ message: 'El campo especie no puede estar vacio' })
+  @IsUUID('4', { message: 'La especie debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'La especie del animal es obligatoria' })
   especie: string;
 
-  @IsString({ message: 'El sexo del animal es obligatorio' })
-  @IsNotEmpty({ message: 'El sexp especie no puede estar vacio' })
+  @IsString({ message: 'El sexo debe ser un texto' })
+  @IsNotEmpty({ message: 'El sexo del animal es obligatorio' })
   sexo: string;
 
-  @IsString({ message: 'El color del animal es obligatorio' })
-  @IsNotEmpty({ message: 'El campo color no puede estar vacio' })
+  @IsString({ message: 'El color debe ser un texto' })
+  @IsNotEmpty({ message: 'El color del animal es obligatorio' })
   color: string;
 
-  @IsArray()
+  @IsArray({ message: 'La alimentación debe ser un arreglo' })
   @ValidateNested({ each: true })
   @Type(() => AlimentacionDto)
   tipo_alimentacion: AlimentacionDto[];
 
-  @IsString({ message: 'El identificador del animal es obligatorio' })
-  @IsNotEmpty({ message: 'El campo identificador no puede estar vacio' })
+  @IsString({ message: 'El identificador debe ser un texto' })
+  @IsNotEmpty({ message: 'El identificador del animal es obligatorio' })
+  @Matches(/^[A-Za-z0-9]{5}-\d{6}$/, {
+    message:
+      'El identificador debe tener el siguiente formato, ejem: BOSE2-000001',
+  })
   identificador: string;
 
-  @IsString({ message: 'La raza del animal es obligatorio' })
-  @IsUUID()
-  @IsNotEmpty({ message: 'El campo raza no puede estar vacio' })
+  @IsUUID('4', { message: 'La raza debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'La raza del animal es obligatoria' })
   raza: string;
 
-  @IsNumber()
-  @Min(0, { message: 'La edad promedio debe ser mayor o igual a 0.' })
+  @IsOptional()
+  @IsNumber({}, { message: 'La edad promedio debe ser un número' })
+  @Min(0, { message: 'La edad promedio debe ser mayor o igual a 0' })
   edad_promedio?: number;
 
+  @IsOptional()
   @IsDateString(
     {},
     { message: 'La fecha de nacimiento debe tener formato YYYY-MM-DD' },
   )
-  @IsNotEmpty({ message: 'El campo fecha nacimiento no puede estar vacio' })
   fecha_nacimiento?: string;
 
-  @IsString({ message: 'Las observaciones del animal son obligatorias' })
-  @IsNotEmpty({ message: 'El campo observaciones no puede estar vacio' })
+  @IsOptional()
+  @IsString({ message: 'Las observaciones deben ser texto' })
   observaciones?: string;
 
-  @IsUUID()
+  @IsUUID('4', { message: 'El ID del propietario debe ser un UUID válido' })
   propietarioId: string;
 
-  @IsUUID()
-  @IsNotEmpty({ message: 'El campo finca no puede estar vacio' })
+  @IsUUID('4', { message: 'El ID de la finca debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'La finca del animal es obligatoria' })
   fincaId: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: 'El valor de castrado debe ser verdadero o falso' })
   castrado?: boolean;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: 'El valor de esterilizado debe ser verdadero o falso' })
   esterelizado?: boolean;
 }

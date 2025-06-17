@@ -16,6 +16,9 @@ export class RazaAnimal {
   @Column({ type: 'varchar', length: 100, unique: true })
   nombre: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  abreviatura: string;
+
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 

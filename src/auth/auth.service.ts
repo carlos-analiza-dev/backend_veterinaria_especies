@@ -22,6 +22,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { ValidRoles } from 'src/interfaces/valid-roles.interface';
 
 @Injectable()
 export class AuthService {
@@ -83,10 +84,12 @@ export class AuthService {
         );
       }
     } else {
-      rol_exits = await this.rolRepo.findOne({ where: { name: 'User' } });
+      rol_exits = await this.rolRepo.findOne({
+        where: { name: ValidRoles.Ganadero },
+      });
       if (!rol_exits) {
         throw new NotFoundException(
-          'El rol User no está configurado en el sistema',
+          'El rol Gamadero no está configurado en el sistema',
         );
       }
     }
@@ -176,8 +179,7 @@ export class AuthService {
     try {
       const queryBuilder = this.userRepository
         .createQueryBuilder('user')
-        .leftJoinAndSelect('user.role', 'role')
-        .where('user.isActive = :isActive', { isActive: true });
+        .leftJoinAndSelect('user.role', 'role');
 
       if (name) {
         queryBuilder.andWhere('user.name ILIKE :name', { name: `%${name}%` });

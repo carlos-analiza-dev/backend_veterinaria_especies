@@ -32,7 +32,7 @@ export class AnimalFincaController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.animalFincaService.findOne(+id);
+    return this.animalFincaService.findOne(id);
   }
 
   @Patch(':id')
@@ -40,7 +40,7 @@ export class AnimalFincaController {
     @Param('id') id: string,
     @Body() updateAnimalFincaDto: UpdateAnimalFincaDto,
   ) {
-    return this.animalFincaService.update(+id, updateAnimalFincaDto);
+    return this.animalFincaService.update(id, updateAnimalFincaDto);
   }
 
   @Delete(':id')

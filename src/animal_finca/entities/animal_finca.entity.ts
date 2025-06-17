@@ -50,6 +50,7 @@ export class AnimalFinca {
 
   @ManyToOne(() => FincasGanadero, (finca) => finca.animales, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   finca: FincasGanadero;
 

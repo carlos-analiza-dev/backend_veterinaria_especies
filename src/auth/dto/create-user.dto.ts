@@ -9,8 +9,6 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { UserRole } from 'src/interfaces/user.role.interface';
-import { ValidRoles } from 'src/interfaces/valid-roles.interface';
 
 export class CreateUserDto {
   @IsString()

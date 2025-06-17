@@ -4,6 +4,9 @@ export class CreateRazaAnimalDto {
   @IsString()
   nombre: string;
 
+  @IsString()
+  abreviatura: string;
+
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
