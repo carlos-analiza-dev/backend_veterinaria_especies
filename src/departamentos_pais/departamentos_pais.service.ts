@@ -62,6 +62,27 @@ export class DepartamentosPaisService {
     }
   }
 
+  async findAllDeptosActives(paisId: string) {
+    try {
+      const pais_exist = await this.paisRepo.findOne({ where: { id: paisId } });
+      if (!pais_exist)
+        throw new NotFoundException('No se encontro el pais seleccionado.');
+      const departamentos = await this.departamentoRepo.find({
+        where: {
+          pais: pais_exist,
+          isActive: true,
+        },
+      });
+      if (!departamentos || departamentos.length === 0)
+        throw new BadRequestException(
+          'No se encontraron departamentos disponibles',
+        );
+      return departamentos;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} departamentosPai`;
   }

@@ -25,6 +25,11 @@ export class PaisController {
     return this.paisService.findAll();
   }
 
+  @Get('activos')
+  findAllActivos() {
+    return this.paisService.findAllActivos();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.paisService.findOne(id);

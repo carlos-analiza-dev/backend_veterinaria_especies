@@ -40,6 +40,13 @@ export class MunicipiosDepartamentosPaisController {
     );
   }
 
+  @Get('/municipios/activos/:departamentoId')
+  findAllActivos(@Param('departamentoId') departamentoId: string) {
+    return this.municipiosDepartamentosPaisService.findAllActivos(
+      departamentoId,
+    );
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.municipiosDepartamentosPaisService.findOne(+id);

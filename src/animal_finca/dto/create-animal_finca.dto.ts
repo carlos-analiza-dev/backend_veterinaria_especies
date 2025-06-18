@@ -40,10 +40,6 @@ export class CreateAnimalFincaDto {
 
   @IsString({ message: 'El identificador debe ser un texto' })
   @IsNotEmpty({ message: 'El identificador del animal es obligatorio' })
-  @Matches(/^[A-Za-z0-9]{5}-\d{6}$/, {
-    message:
-      'El identificador debe tener el siguiente formato, ejem: BOSE2-000001',
-  })
   identificador: string;
 
   @IsUUID('4', { message: 'La raza debe ser un UUID válido' })
@@ -55,7 +51,7 @@ export class CreateAnimalFincaDto {
   @Min(0, { message: 'La edad promedio debe ser mayor o igual a 0' })
   edad_promedio?: number;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'La fecha de nacimiento es obligatoria' })
   @IsDateString(
     {},
     { message: 'La fecha de nacimiento debe tener formato YYYY-MM-DD' },

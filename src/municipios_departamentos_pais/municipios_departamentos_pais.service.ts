@@ -71,6 +71,31 @@ export class MunicipiosDepartamentosPaisService {
     }
   }
 
+  async findAllActivos(departamentoId: string) {
+    try {
+      const depto_exist = await this.departamentoRepo.findOne({
+        where: { id: departamentoId },
+      });
+      if (!depto_exist)
+        throw new NotFoundException(
+          'No se encontro el departamento seleccionado.',
+        );
+      const municipios = await this.municipioRepo.find({
+        where: {
+          departamento: depto_exist,
+          isActive: true,
+        },
+      });
+      if (!municipios || municipios.length === 0)
+        throw new BadRequestException(
+          'No se encontraron municipios disponibles',
+        );
+      return municipios;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} municipiosDepartamentosPai`;
   }

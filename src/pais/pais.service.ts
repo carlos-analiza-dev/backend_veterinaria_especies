@@ -51,6 +51,22 @@ export class PaisService {
     }
   }
 
+  async findAllActivos() {
+    try {
+      const paises = await this.paisRepo.find({
+        where: { isActive: true },
+      });
+      if (!paises || paises.length === 0)
+        throw new NotFoundException(
+          'No se encontraron paises en estos momentos.',
+        );
+
+      return paises;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOne(id: string) {
     try {
       const pais = await this.paisRepo.findOne({ where: { id } });

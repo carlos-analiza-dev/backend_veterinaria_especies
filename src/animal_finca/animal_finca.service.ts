@@ -81,7 +81,7 @@ export class AnimalFincaService {
           if (animalesExistentes >= configEspecie.cantidad) {
             throw new ConflictException(
               `No se pueden agregar más animales de la especie ${especie_animal.nombre}. ` +
-                `Límite permitido: ${configEspecie.cantidad}`,
+                `Límite en finca seleccionada: ${configEspecie.cantidad}`,
             );
           }
         } else {

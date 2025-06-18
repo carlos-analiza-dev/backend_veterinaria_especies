@@ -32,6 +32,11 @@ export class DepartamentosPaisController {
     return this.departamentosPaisService.findAll(paisId, paginationDto);
   }
 
+  @Get('/departamenos/activos/:paisId')
+  findAllDeptosActives(@Param('paisId') paisId: string) {
+    return this.departamentosPaisService.findAllDeptosActives(paisId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.departamentosPaisService.findOne(+id);
