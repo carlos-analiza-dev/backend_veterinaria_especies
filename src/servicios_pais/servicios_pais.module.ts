@@ -4,11 +4,11 @@ import { ServiciosPaisController } from './servicios_pais.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServiciosPai } from './entities/servicios_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
-import { Servicio } from 'src/servicios/entities/servicio.entity';
+import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 
 @Module({
   controllers: [ServiciosPaisController],
-  imports: [TypeOrmModule.forFeature([ServiciosPai, Pai, Servicio])],
+  imports: [TypeOrmModule.forFeature([ServiciosPai, Pai, SubServicio])],
   providers: [ServiciosPaisService],
 })
 export class ServiciosPaisModule {}

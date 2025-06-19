@@ -1,4 +1,5 @@
 import { ServiciosPai } from 'src/servicios_pais/entities/servicios_pai.entity';
+import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('servicios')
@@ -15,6 +16,9 @@ export class Servicio {
   @Column({ type: 'bool', default: true })
   isActive: boolean;
 
-  @OneToMany(() => ServiciosPai, (precio) => precio.servicio, { eager: true })
-  preciosPorPais: ServiciosPai[];
+  @OneToMany(() => SubServicio, (subServicio) => subServicio.servicio, {
+    eager: true,
+    cascade: true,
+  })
+  subServicios: SubServicio[];
 }

@@ -15,6 +15,7 @@ import { FincasGanaderoModule } from './fincas_ganadero/fincas_ganadero.module';
 import { AnimalFincaModule } from './animal_finca/animal_finca.module';
 import { EspecieAnimalModule } from './especie_animal/especie_animal.module';
 import { RazaAnimalModule } from './raza_animal/raza_animal.module';
+import { SubServiciosModule } from './sub_servicios/sub_servicios.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { RazaAnimalModule } from './raza_animal/raza_animal.module';
     AnimalFincaModule,
     EspecieAnimalModule,
     RazaAnimalModule,
+    SubServiciosModule,
   ],
   controllers: [],
   providers: [],
