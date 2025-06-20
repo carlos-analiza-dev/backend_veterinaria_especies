@@ -16,6 +16,9 @@ import { AnimalFincaModule } from './animal_finca/animal_finca.module';
 import { EspecieAnimalModule } from './especie_animal/especie_animal.module';
 import { RazaAnimalModule } from './raza_animal/raza_animal.module';
 import { SubServiciosModule } from './sub_servicios/sub_servicios.module';
+import { CitasModule } from './citas/citas.module';
+import { MedicosModule } from './medicos/medicos.module';
+import { HorariosTrabajoModule } from './horarios_trabajo/horarios_trabajo.module';
 
 @Module({
   imports: [
@@ -45,6 +48,9 @@ import { SubServiciosModule } from './sub_servicios/sub_servicios.module';
     EspecieAnimalModule,
     RazaAnimalModule,
     SubServiciosModule,
+    CitasModule,
+    MedicosModule,
+    HorariosTrabajoModule,
   ],
   controllers: [],
   providers: [],
