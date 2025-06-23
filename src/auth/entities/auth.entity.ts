@@ -45,7 +45,7 @@ export class User {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: true })
   isAuthorized: boolean;
 
   @ManyToOne(() => Pai, (pais) => pais.usuario, { eager: true })

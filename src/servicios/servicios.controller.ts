@@ -27,6 +27,11 @@ export class ServiciosController {
     return this.serviciosService.findAll(paginationDto);
   }
 
+  @Get('/activos')
+  findAllActivos() {
+    return this.serviciosService.findAllActivos();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.serviciosService.findOne(id);

@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MedicosService } from './medicos.service';
 import { CreateMedicoDto } from './dto/create-medico.dto';
 import { UpdateMedicoDto } from './dto/update-medico.dto';
+import { PaginationDto } from 'src/common/dto/pagination-common.dto';
 
 @Controller('medicos')
 export class MedicosController {
@@ -13,18 +23,23 @@ export class MedicosController {
   }
 
   @Get()
-  findAll() {
-    return this.medicosService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.medicosService.findAll(paginationDto);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.medicosService.findOne(+id);
+    return this.medicosService.findOne(id);
+  }
+
+  @Get('especialidad/:id')
+  findByEspecialidades(@Param('id') id: string) {
+    return this.medicosService.findByEspecialidades(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMedicoDto: UpdateMedicoDto) {
-    return this.medicosService.update(+id, updateMedicoDto);
+    return this.medicosService.update(id, updateMedicoDto);
   }
 
   @Delete(':id')

@@ -46,6 +46,22 @@ export class ServiciosService {
     }
   }
 
+  async findAllActivos() {
+    try {
+      const servicios = await this.servicioRepo.find({
+        where: { isActive: true },
+      });
+      if (!servicios || servicios.length === 0) {
+        throw new NotFoundException(
+          'No se encontraron servicios en este momento.',
+        );
+      }
+      return servicios;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOne(id: string) {
     try {
       const servicio = await this.servicioRepo.findOne({ where: { id } });

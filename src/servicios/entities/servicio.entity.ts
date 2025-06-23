@@ -1,6 +1,12 @@
-import { ServiciosPai } from 'src/servicios_pais/entities/servicios_pai.entity';
+import { Medico } from 'src/medicos/entities/medico.entity';
 import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('servicios')
 export class Servicio {
@@ -21,4 +27,7 @@ export class Servicio {
     cascade: true,
   })
   subServicios: SubServicio[];
+
+  @ManyToMany(() => Medico, (medico) => medico.areas_trabajo)
+  medicos: Medico[];
 }
