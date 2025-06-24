@@ -9,15 +9,20 @@ import {
   IsString,
   IsUUID,
   Length,
+  Matches,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 
 export class CreateMedicoDto {
   @IsString({ message: 'El número de colegiado debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'El número de colegiado es obligatorio.' })
-  @Length(3, 25, {
-    message: 'El número de colegiado debe tener entre 3 y 25 caracteres.',
+  @Matches(/^\d+$/, {
+    message: 'El número de colegiado solo debe contener números.',
+  })
+  @MaxLength(9, {
+    message: 'El número de colegiado no debe tener más de 9 dígitos.',
   })
   numero_colegiado: string;
 

@@ -1,4 +1,6 @@
 import { User } from 'src/auth/entities/auth.entity';
+import { Cita } from 'src/citas/entities/cita.entity';
+import { HorariosMedico } from 'src/horarios_medicos/entities/horarios_medico.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
 import {
   Column,
@@ -6,6 +8,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -37,4 +40,10 @@ export class Medico {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
+
+  @OneToMany(() => HorariosMedico, (horario) => horario.medico, { eager: true })
+  horarios: HorariosMedico[];
+
+  @OneToMany(() => Cita, (cita) => cita.medico)
+  citas: Cita[];
 }

@@ -93,6 +93,7 @@ export class MedicosService {
         .createQueryBuilder('medico')
         .leftJoinAndSelect('medico.usuario', 'usuario')
         .leftJoinAndSelect('medico.areas_trabajo', 'areas_trabajo')
+        .leftJoinAndSelect('medico.horarios', 'horarios')
         .andWhere('LOWER(usuario.name) LIKE :name', {
           name: `%${name.toLowerCase()}%`,
         })

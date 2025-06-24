@@ -19,6 +19,7 @@ import { SubServiciosModule } from './sub_servicios/sub_servicios.module';
 import { CitasModule } from './citas/citas.module';
 import { MedicosModule } from './medicos/medicos.module';
 import { HorariosTrabajoModule } from './horarios_trabajo/horarios_trabajo.module';
+import { HorariosMedicosModule } from './horarios_medicos/horarios_medicos.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { HorariosTrabajoModule } from './horarios_trabajo/horarios_trabajo.modul
     CitasModule,
     MedicosModule,
     HorariosTrabajoModule,
+    HorariosMedicosModule,
   ],
   controllers: [],
   providers: [],
