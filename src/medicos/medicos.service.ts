@@ -143,6 +143,34 @@ export class MedicosService {
     }
   }
 
+  async findByEspecialidadesByPais(paisId: string, id: string) {
+    try {
+      const especialidad = await this.servicio_repo.findOne({ where: { id } });
+      if (!especialidad)
+        throw new NotFoundException(
+          'No se encontró la especialidad seleccionada',
+        );
+
+      const medicos = await this.medico_repo
+        .createQueryBuilder('medico')
+        .leftJoinAndSelect('medico.usuario', 'usuario')
+        .leftJoinAndSelect('medico.areas_trabajo', 'area')
+        .where('medico.isActive = :isActive', { isActive: true })
+        .andWhere('area.id = :areaId', { areaId: id })
+        .andWhere('usuario.pais.id = :paisId', { paisId })
+        .getMany();
+
+      if (!medicos || medicos.length === 0)
+        throw new NotFoundException(
+          'No se encontraron médicos disponibles en esta especialidad',
+        );
+
+      return instanceToPlain(medicos);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOne(id: string) {
     try {
       const medico = await this.medico_repo.findOne({ where: { id } });

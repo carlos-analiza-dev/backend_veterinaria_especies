@@ -37,6 +37,14 @@ export class MedicosController {
     return this.medicosService.findByEspecialidades(id);
   }
 
+  @Get('especialidad/:paisId/:id')
+  findByEspecialidadesByPais(
+    @Param('paisId') paisId: string,
+    @Param('id') id: string,
+  ) {
+    return this.medicosService.findByEspecialidadesByPais(paisId, id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMedicoDto: UpdateMedicoDto) {
     return this.medicosService.update(id, updateMedicoDto);

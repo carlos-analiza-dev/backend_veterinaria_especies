@@ -1,23 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CitasService } from './citas.service';
 import { CreateCitaDto } from './dto/create-cita.dto';
 import { UpdateCitaDto } from './dto/update-cita.dto';
+import { PaginationDto } from 'src/common/dto/pagination-common.dto';
 
 @Controller('citas')
 export class CitasController {
   constructor(private readonly citasService: CitasService) {}
 
   @Post()
+  @Post()
   create(@Body() createCitaDto: CreateCitaDto) {
     return this.citasService.create(createCitaDto);
   }
 
-  @Get()
-  findAll() {
-    return this.citasService.findAll();
+  @Get('horarios/disponibles')
+  getHorariosDisponibles(
+    @Query('medicoId') medicoId: string,
+    @Query('fecha') fecha: string,
+  ) {
+    return this.citasService.getHorariosDisponibles(medicoId, fecha);
   }
 
-  @Get(':id')
+  @Get('usuario/:id')
+  findAllByUser(
+    @Param('id') id: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.citasService.findAllByUser(id, paginationDto);
+  }
+
+  /*   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.citasService.findOne(+id);
   }
@@ -30,5 +52,5 @@ export class CitasController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.citasService.remove(+id);
-  }
+  } */
 }

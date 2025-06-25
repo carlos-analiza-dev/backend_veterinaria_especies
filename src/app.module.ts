@@ -18,7 +18,6 @@ import { RazaAnimalModule } from './raza_animal/raza_animal.module';
 import { SubServiciosModule } from './sub_servicios/sub_servicios.module';
 import { CitasModule } from './citas/citas.module';
 import { MedicosModule } from './medicos/medicos.module';
-import { HorariosTrabajoModule } from './horarios_trabajo/horarios_trabajo.module';
 import { HorariosMedicosModule } from './horarios_medicos/horarios_medicos.module';
 
 @Module({
@@ -51,7 +50,7 @@ import { HorariosMedicosModule } from './horarios_medicos/horarios_medicos.modul
     SubServiciosModule,
     CitasModule,
     MedicosModule,
-    HorariosTrabajoModule,
+
     HorariosMedicosModule,
   ],
   controllers: [],

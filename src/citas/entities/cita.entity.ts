@@ -1,5 +1,8 @@
 import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
+import { User } from 'src/auth/entities/auth.entity';
+import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { Medico } from 'src/medicos/entities/medico.entity';
+import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 import {
   Column,
   Entity,
@@ -7,6 +10,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+enum EstadoCita {
+  PENDIENTE = 'pendiente',
+  CONFIRMADA = 'confirmada',
+  CANCELADA = 'cancelada',
+  COMPLETADA = 'completada',
+}
 
 @Entity('citas')
 export class Cita {
@@ -21,15 +31,36 @@ export class Cita {
   @JoinColumn({ name: 'animalId' })
   animal: AnimalFinca;
 
-  @Column({ type: 'timestamp' })
-  fechaInicio: Date;
+  @ManyToOne(() => FincasGanadero, { eager: true })
+  @JoinColumn({ name: 'fincaId' })
+  finca: FincasGanadero;
 
-  @Column({ type: 'timestamp' })
-  fechaFin: Date;
+  @ManyToOne(() => SubServicio)
+  @JoinColumn({ name: 'subServicioId' })
+  subServicio: SubServicio;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'usuarioId' })
+  user: User;
+
+  @Column({ type: 'time' })
+  horaInicio: string;
+
+  @Column({ type: 'time' })
+  horaFin: string;
+
+  @Column({ type: 'date' })
+  fecha: string;
 
   @Column({ type: 'int' })
   cantidadAnimales: number;
 
-  @Column({ type: 'varchar', length: 50, default: 'pendiente' })
-  estado: string;
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  totalPagar: number;
+
+  @Column({ type: 'int', default: 1 })
+  duracion: number;
+
+  @Column({ type: 'enum', enum: EstadoCita, default: EstadoCita.PENDIENTE })
+  estado: EstadoCita;
 }
