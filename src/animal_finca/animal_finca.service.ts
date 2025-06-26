@@ -173,6 +173,36 @@ export class AnimalFincaService {
     }
   }
 
+  async findAllAnimalesByFincaRaza(
+    fincaId: string,
+    especieId: string,
+    razaId: string,
+  ) {
+    try {
+      const animales = await this.animalRepo
+        .createQueryBuilder('animal')
+        .leftJoinAndSelect('animal.finca', 'finca')
+        .leftJoinAndSelect('animal.especie', 'especie')
+        .leftJoinAndSelect('animal.raza', 'raza')
+        .leftJoinAndSelect('animal.propietario', 'propietario')
+        .where('finca.id = :fincaId', { fincaId })
+        .andWhere('especie.id = :especieId', { especieId })
+        .andWhere('raza.id = :razaId', { razaId })
+        .orderBy('animal.fecha_registro', 'DESC')
+        .getMany();
+
+      if (animales.length === 0) {
+        throw new NotFoundException(
+          'No se encontraron animales en este momento.',
+        );
+      }
+
+      return animales;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOne(id: string) {
     try {
       const animal = await this.animalRepo.findOne({ where: { id } });

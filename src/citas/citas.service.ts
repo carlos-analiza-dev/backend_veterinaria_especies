@@ -142,19 +142,27 @@ export class CitasService {
 
     return this.citas_repo.save(nuevaCita);
   }
-  async getHorariosDisponibles(medicoId: string, fecha: string) {
+  async getHorariosDisponibles(
+    medicoId: string,
+    fecha: string,
+    duracionServicioHoras: number,
+  ) {
     const medico = await this.medico_repo.findOneBy({ id: medicoId });
     if (!medico) {
       throw new NotFoundException('Médico no encontrado');
     }
 
     const fechaDate = new Date(fecha);
-    const diaSemana = fechaDate.getDay();
+
+    const diaSemanaJS = fechaDate.getDay();
+    const diaSemanaDB = diaSemanaJS === 0 ? 7 : diaSemanaJS;
+
+    console.log('Día JS:', diaSemanaJS, '-> Día DB:', diaSemanaDB);
 
     const horariosMedico = await this.horarios_repo.find({
       where: {
         medico: { id: medicoId },
-        diaSemana,
+        diaSemana: diaSemanaDB,
         disponible: true,
       },
       order: { horaInicio: 'ASC' },
@@ -173,50 +181,46 @@ export class CitasService {
     });
 
     const slotsDisponibles = [];
-    const intervalo = 60;
 
     for (const horario of horariosMedico) {
-      const [horaInicioHoras, horaInicioMins] = horario.horaInicio
-        .split(':')
-        .map(Number);
-      const [horaFinHoras, horaFinMins] = horario.horaFin
-        .split(':')
-        .map(Number);
+      const [horaInicioHoras] = horario.horaInicio.split(':').map(Number);
+      const [horaFinHoras] = horario.horaFin.split(':').map(Number);
 
-      let slotActual = new Date(fechaDate);
-      slotActual.setHours(horaInicioHoras, horaInicioMins, 0, 0);
+      for (
+        let hora = horaInicioHoras;
+        hora <= horaFinHoras - duracionServicioHoras;
+        hora++
+      ) {
+        const horaFinSlot = hora + duracionServicioHoras;
 
-      const horarioFin = new Date(fechaDate);
-      horarioFin.setHours(horaFinHoras, horaFinMins, 0, 0);
+        const seSolapaConAlmuerzo = hora < 13 && horaFinSlot > 12;
 
-      while (slotActual < horarioFin) {
-        const slotFin = new Date(slotActual);
-        slotFin.setMinutes(slotActual.getMinutes() + intervalo);
+        if (seSolapaConAlmuerzo) {
+          continue;
+        }
 
-        const horaInicioStr = slotActual.toTimeString().substr(0, 5);
-        const horaFinStr = slotFin.toTimeString().substr(0, 5);
+        const horaInicioStr = `${String(hora).padStart(2, '0')}:00`;
+        const horaFinStr = `${String(horaFinSlot).padStart(2, '0')}:00`;
 
-        const ocupado = citas.some((cita) =>
-          this.horariosSeSolapan(
-            cita.horaInicio,
-            cita.horaFin,
-            horaInicioStr,
-            horaFinStr,
-          ),
-        );
+        const ocupado = citas.some((cita) => {
+          const [citaInicio] = cita.horaInicio.split(':').map(Number);
+          const [citaFin] = cita.horaFin.split(':').map(Number);
+          return hora < citaFin && horaFinSlot > citaInicio;
+        });
 
-        if (!ocupado && slotFin <= horarioFin) {
+        if (!ocupado) {
           slotsDisponibles.push({
             horaInicio: horaInicioStr,
             horaFin: horaFinStr,
+            duracionDisponible: duracionServicioHoras * 60,
           });
         }
-
-        slotActual = new Date(slotFin);
       }
     }
 
-    return slotsDisponibles;
+    return slotsDisponibles.sort((a, b) =>
+      a.horaInicio.localeCompare(b.horaInicio),
+    );
   }
 
   async findAllByUser(id: string, paginationDto: PaginationDto) {
@@ -248,14 +252,5 @@ export class CitasService {
     } catch (error) {
       throw error;
     }
-  }
-
-  private horariosSeSolapan(
-    hIni1: string,
-    hFin1: string,
-    hIni2: string,
-    hFin2: string,
-  ): boolean {
-    return hIni1 < hFin2 && hFin1 > hIni2;
   }
 }

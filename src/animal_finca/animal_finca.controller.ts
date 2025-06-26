@@ -30,6 +30,19 @@ export class AnimalFincaController {
     return this.animalFincaService.findAll(propietarioId, paginationDto);
   }
 
+  @Get('/animales/:fincaId/:especieId/:razaId')
+  findAllAnimalesByFincaRaza(
+    @Param('fincaId') fincaId: string,
+    @Param('especieId') especieId: string,
+    @Param('razaId') razaId: string,
+  ) {
+    return this.animalFincaService.findAllAnimalesByFincaRaza(
+      fincaId,
+      especieId,
+      razaId,
+    );
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.animalFincaService.findOne(id);

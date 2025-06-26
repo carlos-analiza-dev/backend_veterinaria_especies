@@ -27,8 +27,13 @@ export class CitasController {
   getHorariosDisponibles(
     @Query('medicoId') medicoId: string,
     @Query('fecha') fecha: string,
+    @Query('duracionServicioHoras') duracionServicioHoras: string,
   ) {
-    return this.citasService.getHorariosDisponibles(medicoId, fecha);
+    return this.citasService.getHorariosDisponibles(
+      medicoId,
+      fecha,
+      +duracionServicioHoras,
+    );
   }
 
   @Get('usuario/:id')
