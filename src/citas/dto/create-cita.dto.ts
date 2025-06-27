@@ -52,7 +52,8 @@ export class CreateCitaDto {
 
   @IsInt({ message: 'La cantidad de animales debe ser un número entero.' })
   @Min(1, { message: 'La cantidad de animales debe ser al menos 1.' })
-  cantidadAnimales: number;
+  @IsOptional()
+  cantidadAnimales?: number;
 
   @IsNumber()
   @Min(0, { message: 'El total a pagar debe ser mayor o igual a 0.' })

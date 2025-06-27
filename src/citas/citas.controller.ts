@@ -44,17 +44,17 @@ export class CitasController {
     return this.citasService.findAllByUser(id, paginationDto);
   }
 
-  /*   @Get(':id')
+  /*  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.citasService.findOne(+id);
   }
-
+ */
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCitaDto: UpdateCitaDto) {
-    return this.citasService.update(+id, updateCitaDto);
+    return this.citasService.update(id, updateCitaDto);
   }
 
-  @Delete(':id')
+  /* @Delete(':id')
   remove(@Param('id') id: string) {
     return this.citasService.remove(+id);
   } */

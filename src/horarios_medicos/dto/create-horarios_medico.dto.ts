@@ -16,9 +16,9 @@ export class CreateHorariosMedicoDto {
   medicoId: string;
 
   @IsInt({ message: 'El día de la semana debe ser un número entero.' })
-  @Min(1, { message: 'El día de la semana debe ser al menos 1 (lunes).' })
-  @Max(7, {
-    message: 'El día de la semana no puede ser mayor que 7 (domingo).',
+  @Min(0, { message: 'El día de la semana debe ser al menos (lunes).' })
+  @Max(6, {
+    message: 'El día de la semana no puede ser mayor que (domingo).',
   })
   diaSemana: number;
 

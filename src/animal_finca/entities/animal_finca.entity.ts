@@ -30,7 +30,7 @@ export class AnimalFinca {
   @ManyToOne(() => RazaAnimal, (raza) => raza.animales, { eager: true })
   raza: RazaAnimal;
 
-  @Column({ type: 'decimal', nullable: true })
+  @Column({ type: 'int', nullable: true })
   edad_promedio: number;
 
   @Column({ type: 'date', nullable: true })

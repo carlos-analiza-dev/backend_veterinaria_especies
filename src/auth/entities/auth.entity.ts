@@ -35,6 +35,9 @@ export class User {
   @Column('text')
   direccion: string;
 
+  @Column('text')
+  sexo: string;
+
   @Column('text', { unique: true })
   telefono: string;
 

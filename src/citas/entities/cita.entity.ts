@@ -52,7 +52,7 @@ export class Cita {
   @Column({ type: 'date' })
   fecha: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 1 })
   cantidadAnimales: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })

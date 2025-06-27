@@ -12,6 +12,7 @@ import {
   Repository,
   MoreThan,
   MoreThanOrEqual,
+  Not,
 } from 'typeorm';
 import { Medico } from 'src/medicos/entities/medico.entity';
 import { HorariosMedico } from 'src/horarios_medicos/entities/horarios_medico.entity';
@@ -21,6 +22,7 @@ import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 import { User } from 'src/auth/entities/auth.entity';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
 import { instanceToPlain } from 'class-transformer';
+import { UpdateCitaDto } from './dto/update-cita.dto';
 
 @Injectable()
 export class CitasService {
@@ -142,27 +144,37 @@ export class CitasService {
 
     return this.citas_repo.save(nuevaCita);
   }
+
   async getHorariosDisponibles(
     medicoId: string,
     fecha: string,
     duracionServicioHoras: number,
   ) {
+    const fechaActual = new Date();
+    const fechaSolicitud = new Date(fecha);
+
+    const fechaActualSinHora = new Date(fechaActual);
+    fechaActualSinHora.setHours(0, 0, 0, 0);
+
+    const fechaSolicitudSinHora = new Date(fechaSolicitud);
+    fechaSolicitudSinHora.setHours(0, 0, 0, 0);
+
+    if (fechaSolicitudSinHora < fechaActualSinHora) {
+      return [];
+    }
+
     const medico = await this.medico_repo.findOneBy({ id: medicoId });
     if (!medico) {
       throw new NotFoundException('Médico no encontrado');
     }
 
     const fechaDate = new Date(fecha);
-
     const diaSemanaJS = fechaDate.getDay();
-    const diaSemanaDB = diaSemanaJS === 0 ? 7 : diaSemanaJS;
-
-    console.log('Día JS:', diaSemanaJS, '-> Día DB:', diaSemanaDB);
 
     const horariosMedico = await this.horarios_repo.find({
       where: {
         medico: { id: medicoId },
-        diaSemana: diaSemanaDB,
+        diaSemana: diaSemanaJS,
         disponible: true,
       },
       order: { horaInicio: 'ASC' },
@@ -203,9 +215,18 @@ export class CitasService {
         const horaFinStr = `${String(horaFinSlot).padStart(2, '0')}:00`;
 
         const ocupado = citas.some((cita) => {
-          const [citaInicio] = cita.horaInicio.split(':').map(Number);
-          const [citaFin] = cita.horaFin.split(':').map(Number);
-          return hora < citaFin && horaFinSlot > citaInicio;
+          const [citaInicioH, citaInicioM] = cita.horaInicio
+            .split(':')
+            .map(Number);
+          const [citaFinH, citaFinM] = cita.horaFin.split(':').map(Number);
+
+          const citaInicioMin = citaInicioH * 60 + citaInicioM;
+          const citaFinMin = citaFinH * 60 + citaFinM;
+
+          const slotInicioMin = hora * 60;
+          const slotFinMin = horaFinSlot * 60;
+
+          return slotInicioMin < citaFinMin && slotFinMin > citaInicioMin;
         });
 
         if (!ocupado) {
@@ -252,5 +273,97 @@ export class CitasService {
     } catch (error) {
       throw error;
     }
+  }
+  async update(id: string, updateCitaDto: UpdateCitaDto) {
+    const cita = await this.citas_repo.findOne({
+      where: { id },
+      relations: ['medico'],
+    });
+
+    if (!cita) {
+      throw new NotFoundException('Cita no encontrada');
+    }
+
+    const {
+      medicoId = cita.medico.id,
+      fecha = cita.fecha,
+      horaInicio = cita.horaInicio.split(':').slice(0, 2).join(':'),
+      duracion = cita.duracion,
+      animalId,
+      cantidadAnimales,
+      fincaId,
+      subServicioId,
+      totalPagar,
+    } = updateCitaDto;
+
+    const [hora, minuto] = horaInicio.split(':').map(Number);
+    const nuevaHoraFin = `${String(hora + duracion).padStart(2, '0')}:${String(
+      minuto,
+    ).padStart(2, '0')}:00`;
+
+    const diaSemana = new Date(fecha).getDay();
+    const horarioValido = await this.horarios_repo.findOne({
+      where: {
+        medico: { id: medicoId },
+        diaSemana,
+        disponible: true,
+        horaInicio: LessThanOrEqual(horaInicio),
+        horaFin: MoreThanOrEqual(nuevaHoraFin),
+      },
+    });
+
+    if (!horarioValido) {
+      throw new BadRequestException('El médico no trabaja en ese horario');
+    }
+
+    const citasSolapadas = await this.citas_repo.find({
+      where: {
+        medico: { id: medicoId },
+        fecha,
+        id: Not(id),
+        horaInicio: LessThan(nuevaHoraFin),
+        horaFin: MoreThan(horaInicio),
+      },
+    });
+
+    if (citasSolapadas.length > 0) {
+      throw new BadRequestException(
+        'El médico ya tiene una cita en ese horario',
+      );
+    }
+
+    if (animalId) {
+      const animal = await this.animal_ganadero.findOne({
+        where: { id: animalId },
+      });
+      if (!animal) throw new NotFoundException('Animal no encontrado');
+      cita.animal = animal;
+    }
+
+    if (fincaId) {
+      const finca = await this.finca_ganadero.findOne({
+        where: { id: fincaId },
+      });
+      if (!finca) throw new NotFoundException('Finca no encontrada');
+      cita.finca = finca;
+    }
+
+    if (subServicioId) {
+      const subServicio = await this.sub_servicio_repo.findOne({
+        where: { id: subServicioId },
+      });
+      if (!subServicio)
+        throw new NotFoundException('Sub-servicio no encontrado');
+      cita.subServicio = subServicio;
+    }
+
+    cita.fecha = fecha;
+    cita.horaInicio = `${horaInicio}:00`;
+    cita.horaFin = nuevaHoraFin;
+    cita.duracion = duracion;
+    cita.totalPagar = totalPagar ?? cita.totalPagar;
+    cita.cantidadAnimales = cantidadAnimales ?? cita.cantidadAnimales;
+
+    return await this.citas_repo.save(cita);
   }
 }

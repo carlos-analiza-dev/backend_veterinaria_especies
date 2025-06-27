@@ -50,6 +50,7 @@ export class AuthService {
       departamento: departamentoId,
       municipio: municipioId,
       role,
+      sexo,
     } = createUserDto;
 
     const pais_existe = await this.paisRepo.findOne({ where: { id: paisId } });
@@ -106,6 +107,7 @@ export class AuthService {
         departamento: departamento_existe,
         municipio: municipio_existe,
         role: rol_exits,
+        sexo,
         isActive: true,
         isAuthorized: false,
       });

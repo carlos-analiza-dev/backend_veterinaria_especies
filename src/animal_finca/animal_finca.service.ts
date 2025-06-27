@@ -103,13 +103,30 @@ export class AnimalFincaService {
         throw new ConflictException('El identificador ya está en uso');
       }
 
+      let edadCalculada: number | null = null;
+
+      if (fecha_nacimiento) {
+        const nacimiento = new Date(fecha_nacimiento);
+        const hoy = new Date();
+
+        const años = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+        const dia = hoy.getDate() - nacimiento.getDate();
+
+        if (mes < 0 || (mes === 0 && dia < 0)) {
+          edadCalculada = años - 1;
+        } else {
+          edadCalculada = años;
+        }
+      }
+
       const nuevoAnimal = this.animalRepo.create({
         color,
         especie: especie_animal,
         identificador,
         raza: raza_animal,
         sexo,
-        edad_promedio,
+        edad_promedio: edadCalculada,
         fecha_nacimiento,
         observaciones,
         propietario,
@@ -282,11 +299,28 @@ export class AnimalFincaService {
     if (edad_promedio !== undefined) animal.edad_promedio = edad_promedio;
 
     if (fecha_nacimiento !== undefined) {
+      let edadCalculada: number | null = null;
+
+      if (fecha_nacimiento) {
+        const nacimiento = new Date(fecha_nacimiento);
+        const hoy = new Date();
+
+        const años = hoy.getFullYear() - nacimiento.getFullYear();
+        const mes = hoy.getMonth() - nacimiento.getMonth();
+        const dia = hoy.getDate() - nacimiento.getDate();
+
+        if (mes < 0 || (mes === 0 && dia < 0)) {
+          edadCalculada = años - 1;
+        } else {
+          edadCalculada = años;
+        }
+      }
       const fecha = new Date(fecha_nacimiento);
       if (isNaN(fecha.getTime())) {
         throw new BadRequestException('Fecha de nacimiento inválida');
       }
       animal.fecha_nacimiento = fecha;
+      animal.edad_promedio = edadCalculada;
     }
 
     if (observaciones !== undefined) animal.observaciones = observaciones;
