@@ -90,27 +90,35 @@ export class FincasGanaderoService {
     }
   }
 
-  async findAll(propietarioId: string) {
+  async findAll(propietarioId: string, paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0, name } = paginationDto;
     try {
       const propietario = await this.userRepo.findOneBy({ id: propietarioId });
       if (!propietario) {
         throw new NotFoundException('El propietario no existe');
       }
 
-      const [fincas, total] = await this.fincasRepo.findAndCount({
-        where: {
-          propietario: { id: propietarioId },
-          isActive: true,
-        },
-        relations: ['departamento', 'municipio', 'propietario'],
+      const query = this.fincasRepo
+        .createQueryBuilder('finca')
+        .leftJoinAndSelect('finca.departamento', 'departamento')
+        .leftJoinAndSelect('finca.municipio', 'municipio')
+        .leftJoinAndSelect('finca.propietario', 'propietario')
+        .where('finca.propietarioId = :propietarioId', { propietarioId })
+        .andWhere('finca.isActive = true');
 
-        order: { fecha_registro: 'DESC' },
-      });
+      if (name) {
+        query.andWhere('LOWER(finca.nombre_finca) LIKE LOWER(:name)', {
+          name: `%${name}%`,
+        });
+      }
 
-      const fincas_propietario = instanceToPlain(fincas);
+      query.orderBy('finca.fecha_registro', 'DESC').skip(offset).take(limit);
+
+      const [fincas, total] = await query.getManyAndCount();
+      const fincasPlain = instanceToPlain(fincas);
 
       return {
-        fincas: fincas_propietario,
+        fincas: fincasPlain,
         total,
       };
     } catch (error) {

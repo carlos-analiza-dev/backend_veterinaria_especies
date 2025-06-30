@@ -23,8 +23,11 @@ export class FincasGanaderoController {
   }
 
   @Get('/fincas/:propietadrioId')
-  findAll(@Param('propietadrioId') propietadrioId: string) {
-    return this.fincasGanaderoService.findAll(propietadrioId);
+  findAll(
+    @Param('propietadrioId') propietadrioId: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.fincasGanaderoService.findAll(propietadrioId, paginationDto);
   }
 
   @Get(':id')
