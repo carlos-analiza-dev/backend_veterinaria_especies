@@ -44,6 +44,14 @@ export class CitasController {
     return this.citasService.findAllByUser(id, paginationDto);
   }
 
+  @Get('medico/:id')
+  findAllByMedico(
+    @Param('id') id: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.citasService.findAllByMedico(id, paginationDto);
+  }
+
   /*  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.citasService.findOne(+id);

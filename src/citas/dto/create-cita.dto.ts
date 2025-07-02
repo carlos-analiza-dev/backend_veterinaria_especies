@@ -8,6 +8,7 @@ import {
   Matches,
   Min,
 } from 'class-validator';
+import { EstadoCita } from 'src/interfaces/estados_citas';
 
 export class CreateCitaDto {
   @IsString({ message: 'El ID del médico debe ser un UUID válido.' })
@@ -42,6 +43,7 @@ export class CreateCitaDto {
   @Matches(/^([01]\d|2[0-3]):([0-5]\d)$/, {
     message: 'La hora de inicio debe estar en formato HH:mm (ej. 08:30).',
   })
+  @IsNotEmpty({ message: 'La hora es obligatoria.' })
   horaInicio: string;
 
   @IsString({ message: 'La hora de fin debe ser una cadena en formato HH:mm.' })
@@ -63,4 +65,7 @@ export class CreateCitaDto {
   @IsOptional()
   @Min(1, { message: 'La duración mínima de una cita debe ser 1 hora.' })
   duracion?: number = 1;
+
+  @IsOptional()
+  estado?: EstadoCita;
 }

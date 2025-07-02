@@ -23,6 +23,7 @@ import { User } from 'src/auth/entities/auth.entity';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
 import { instanceToPlain } from 'class-transformer';
 import { UpdateCitaDto } from './dto/update-cita.dto';
+import { EstadoCita } from 'src/interfaces/estados_citas';
 
 @Injectable()
 export class CitasService {
@@ -128,6 +129,19 @@ export class CitasService {
         'El usuario seleccionado no esta disponible en este momento',
       );
 
+    const citaExistente = await this.citas_repo.findOne({
+      where: {
+        animal: { id: animalId },
+        fecha,
+      },
+    });
+
+    if (citaExistente) {
+      throw new BadRequestException(
+        'El animal ya tiene una cita agendada para esta fecha.',
+      );
+    }
+
     const nuevaCita = this.citas_repo.create({
       animal: animal_exist,
       cantidadAnimales,
@@ -153,13 +167,15 @@ export class CitasService {
     const fechaActual = new Date();
     const fechaSolicitud = new Date(fecha);
 
-    const fechaActualSinHora = new Date(fechaActual);
-    fechaActualSinHora.setHours(0, 0, 0, 0);
+    const fechaActualUTC = new Date(
+      Date.UTC(
+        fechaActual.getFullYear(),
+        fechaActual.getMonth(),
+        fechaActual.getDate(),
+      ),
+    );
 
-    const fechaSolicitudSinHora = new Date(fechaSolicitud);
-    fechaSolicitudSinHora.setHours(0, 0, 0, 0);
-
-    if (fechaSolicitudSinHora < fechaActualSinHora) {
+    if (fechaSolicitud < fechaActualUTC) {
       return [];
     }
 
@@ -274,6 +290,43 @@ export class CitasService {
       throw error;
     }
   }
+
+  async findAllByMedico(id: string, paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+
+    try {
+      const medico_exist = await this.user_repo.findOne({
+        where: { id },
+      });
+      if (!medico_exist)
+        throw new NotFoundException('No se encontró el medico seleccionado.');
+
+      const [citas, total] = await this.citas_repo.findAndCount({
+        where: {
+          medico: { usuario: { id } },
+          estado: EstadoCita.PENDIENTE,
+        },
+        relations: ['medico', 'animal', 'finca', 'subServicio'],
+        take: limit,
+        skip: offset,
+        order: {
+          fecha: 'DESC',
+        },
+      });
+      if (citas.length === 0)
+        throw new NotFoundException(
+          'No se encontraron citas disponibles en este momento',
+        );
+      const cita_aplanada = instanceToPlain(citas);
+      return {
+        total,
+        citas: cita_aplanada,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async update(id: string, updateCitaDto: UpdateCitaDto) {
     const cita = await this.citas_repo.findOne({
       where: { id },
@@ -294,7 +347,32 @@ export class CitasService {
       fincaId,
       subServicioId,
       totalPagar,
+      estado,
     } = updateCitaDto;
+
+    if (estado) {
+      if (!Object.values(EstadoCita).includes(estado)) {
+        throw new BadRequestException('Estado de cita no válido');
+      }
+
+      if (
+        cita.estado === EstadoCita.CANCELADA &&
+        estado !== EstadoCita.CANCELADA
+      ) {
+        throw new BadRequestException(
+          'No se puede modificar una cita cancelada',
+        );
+      }
+
+      if (
+        cita.estado === EstadoCita.COMPLETADA &&
+        estado !== EstadoCita.COMPLETADA
+      ) {
+        throw new BadRequestException(
+          'No se puede modificar una cita completada',
+        );
+      }
+    }
 
     const [hora, minuto] = horaInicio.split(':').map(Number);
     const nuevaHoraFin = `${String(hora + duracion).padStart(2, '0')}:${String(
@@ -363,6 +441,7 @@ export class CitasService {
     cita.duracion = duracion;
     cita.totalPagar = totalPagar ?? cita.totalPagar;
     cita.cantidadAnimales = cantidadAnimales ?? cita.cantidadAnimales;
+    cita.estado = estado;
 
     return await this.citas_repo.save(cita);
   }

@@ -21,6 +21,12 @@ export class EspecieCantidadDto {
   cantidad: number;
 }
 
+export class TipoFinca {
+  @IsString()
+  @Length(1, 100)
+  tipo_explotacion: string;
+}
+
 export class CreateFincasGanaderoDto {
   @IsString()
   @Length(3, 150)
@@ -55,9 +61,10 @@ export class CreateFincasGanaderoDto {
   @Length(0, 255)
   area_ganaderia_hectarea?: string;
 
-  @IsOptional()
-  @IsString()
-  tipo_explotacion?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TipoFinca)
+  tipo_explotacion?: TipoFinca[];
 
   @IsArray()
   @ValidateNested({ each: true })

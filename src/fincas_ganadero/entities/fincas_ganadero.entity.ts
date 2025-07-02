@@ -41,8 +41,8 @@ export class FincasGanadero {
   @Column({ type: 'varchar', length: 255, nullable: true })
   area_ganaderia_hectarea: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  tipo_explotacion: string;
+  @Column({ type: 'jsonb', nullable: true })
+  tipo_explotacion: { tipo_explotacion: string }[];
 
   @Column({ type: 'jsonb', nullable: true })
   especies_maneja: { especie: string; cantidad: number }[];

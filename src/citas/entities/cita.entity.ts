@@ -1,6 +1,7 @@
 import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 import { User } from 'src/auth/entities/auth.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
+import { EstadoCita } from 'src/interfaces/estados_citas';
 import { Medico } from 'src/medicos/entities/medico.entity';
 import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 import {
@@ -10,13 +11,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-enum EstadoCita {
-  PENDIENTE = 'pendiente',
-  CONFIRMADA = 'confirmada',
-  CANCELADA = 'cancelada',
-  COMPLETADA = 'completada',
-}
 
 @Entity('citas')
 export class Cita {
