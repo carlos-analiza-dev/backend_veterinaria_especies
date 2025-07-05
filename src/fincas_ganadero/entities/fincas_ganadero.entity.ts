@@ -26,6 +26,12 @@ export class FincasGanadero {
   @Column({ type: 'varchar', length: 255, nullable: true })
   ubicacion: string;
 
+  @Column({ type: 'double precision', nullable: true })
+  latitud: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  longitud: number;
+
   @Column({ type: 'varchar', length: 50, nullable: true })
   abreviatura: string;
 

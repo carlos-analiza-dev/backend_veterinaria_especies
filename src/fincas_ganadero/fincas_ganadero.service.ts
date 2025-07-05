@@ -39,6 +39,8 @@ export class FincasGanaderoService {
       departamentoId,
       municipioId,
       pais_id,
+      latitud,
+      longitud,
     } = createFincasGanaderoDto;
 
     try {
@@ -77,6 +79,8 @@ export class FincasGanaderoService {
         pais_id: pais,
         departamento,
         municipio,
+        latitud,
+        longitud,
       });
 
       await this.fincasRepo.save(finca);

@@ -41,6 +41,14 @@ export class CreateFincasGanaderoDto {
   ubicacion?: string;
 
   @IsOptional()
+  @Type(() => Number)
+  latitud?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  longitud?: number;
+
+  @IsOptional()
   @IsString()
   @Length(0, 50)
   abreviatura?: string;
