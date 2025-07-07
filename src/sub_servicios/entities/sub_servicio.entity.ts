@@ -1,3 +1,4 @@
+import { Medico } from 'src/medicos/entities/medico.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
 import { ServiciosPai } from 'src/servicios_pais/entities/servicios_pai.entity';
 import {
@@ -7,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity('sub_servicios')
@@ -35,4 +37,7 @@ export class SubServicio {
     cascade: true,
   })
   preciosPorPais: ServiciosPai[];
+
+  @ManyToMany(() => Medico, (medico) => medico.areas_trabajo)
+  medicos: Medico[];
 }

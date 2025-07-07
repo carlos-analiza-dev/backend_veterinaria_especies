@@ -1,7 +1,7 @@
 import { User } from 'src/auth/entities/auth.entity';
 import { Cita } from 'src/citas/entities/cita.entity';
 import { HorariosMedico } from 'src/horarios_medicos/entities/horarios_medico.entity';
-import { Servicio } from 'src/servicios/entities/servicio.entity';
+import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 import {
   Column,
   Entity,
@@ -30,9 +30,11 @@ export class Medico {
   @Column('int', { default: 0 })
   anios_experiencia: number;
 
-  @ManyToMany(() => Servicio, (servicio) => servicio.medicos, { eager: true })
+  @ManyToMany(() => SubServicio, (servicio) => servicio.medicos, {
+    eager: true,
+  })
   @JoinTable()
-  areas_trabajo: Servicio[];
+  areas_trabajo: SubServicio[];
 
   @OneToOne(() => User, { eager: true })
   @JoinColumn({ name: 'usuarioId' })

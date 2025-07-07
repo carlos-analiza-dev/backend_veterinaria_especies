@@ -40,7 +40,13 @@ export class AnimalFinca {
   observaciones: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  tipo_alimentacion: { alimento: string }[];
+  tipo_alimentacion: { alimento: string; origen: 'comprado' | 'producido' }[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  complementos: { complemento: string }[];
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  medicamento: string;
 
   @CreateDateColumn()
   fecha_registro: Date;

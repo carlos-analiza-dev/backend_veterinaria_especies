@@ -9,9 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Medico } from './entities/medico.entity';
 import { In, Repository } from 'typeorm';
 import { User } from 'src/auth/entities/auth.entity';
-import { Servicio } from 'src/servicios/entities/servicio.entity';
 import { instanceToPlain } from 'class-transformer';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
+import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 
 @Injectable()
 export class MedicosService {
@@ -20,8 +20,8 @@ export class MedicosService {
     private readonly medico_repo: Repository<Medico>,
     @InjectRepository(User)
     private readonly user_repo: Repository<User>,
-    @InjectRepository(Servicio)
-    private readonly servicio_repo: Repository<Servicio>,
+    @InjectRepository(SubServicio)
+    private readonly servicio_repo: Repository<SubServicio>,
   ) {}
   async create(createMedicoDto: CreateMedicoDto) {
     const {

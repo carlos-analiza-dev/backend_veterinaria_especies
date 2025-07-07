@@ -155,6 +155,8 @@ export class FincasGanaderoService {
       departamentoId,
       municipioId,
       pais_id,
+      latitud,
+      longitud,
     } = updateFincasGanaderoDto;
 
     try {
@@ -215,6 +217,8 @@ export class FincasGanaderoService {
       finca.tipo_explotacion = tipo_explotacion ?? finca.tipo_explotacion;
       finca.ubicacion = ubicacion ?? finca.ubicacion;
       finca.especies_maneja = especies_maneja ?? finca.especies_maneja;
+      (finca.latitud = latitud ?? finca.latitud),
+        (finca.longitud = longitud ?? finca.longitud);
 
       await this.fincasRepo.save(finca);
 

@@ -39,12 +39,13 @@ export class AnimalFincaService {
       propietarioId,
       raza,
       sexo,
-      edad_promedio,
       fecha_nacimiento,
       observaciones,
       tipo_alimentacion,
       castrado,
       esterelizado,
+      complementos,
+      medicamento,
     } = createAnimalFincaDto;
 
     try {
@@ -134,6 +135,8 @@ export class AnimalFincaService {
         castrado,
         esterelizado,
         tipo_alimentacion,
+        complementos,
+        medicamento,
       });
 
       await this.animalRepo.save(nuevoAnimal);

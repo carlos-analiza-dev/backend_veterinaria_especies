@@ -3,21 +3,30 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   Length,
-  Matches,
   Min,
   ValidateNested,
 } from 'class-validator';
 
-export class AlimentacionDto {
-  @IsString()
-  @Length(1, 100)
+class TipoAlimentacionDto {
+  @IsString({ message: 'El nombre del alimento debe ser un texto válido.' })
   alimento: string;
+
+  @IsIn(['comprado', 'producido'], {
+    message: 'El origen debe ser "comprado" o "producido".',
+  })
+  origen: 'comprado' | 'producido';
+}
+
+class ComplementoDto {
+  @IsString({ message: 'El complemento debe ser un texto válido.' })
+  complemento: string;
 }
 
 export class CreateAnimalFincaDto {
@@ -35,8 +44,18 @@ export class CreateAnimalFincaDto {
 
   @IsArray({ message: 'La alimentación debe ser un arreglo' })
   @ValidateNested({ each: true })
-  @Type(() => AlimentacionDto)
-  tipo_alimentacion: AlimentacionDto[];
+  @Type(() => TipoAlimentacionDto)
+  tipo_alimentacion: TipoAlimentacionDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ComplementoDto)
+  @IsOptional()
+  complementos: ComplementoDto[];
+
+  @IsString()
+  @IsOptional()
+  medicamento?: string;
 
   @IsString({ message: 'El identificador debe ser un texto' })
   @IsNotEmpty({ message: 'El identificador del animal es obligatorio' })
