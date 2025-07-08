@@ -45,8 +45,62 @@ export class AnimalFinca {
   @Column({ type: 'jsonb', nullable: true })
   complementos: { complemento: string }[];
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, default: 'Sin medicamento' })
   medicamento: string;
+
+  /* DATOS PADRE */
+
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_padre?: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  arete_padre: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  raza_padre: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  nombre_criador_padre: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  nombre_propietario_padre: string;
+
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_finca_origen_padre: string;
+
+  @Column({ type: 'boolean', default: false })
+  compra_padre: boolean;
+
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_criador_origen_padre: string;
+
+  /* DATOS MADRE */
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_madre?: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  arete_madre: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  raza_madre: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  nombre_criador_madre: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  nombre_propietario_madre: string;
+
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_finca_origen_madre: string;
+
+  @Column({ type: 'int', default: 1 })
+  numero_parto_madre: number;
+
+  @Column({ type: 'boolean', default: false })
+  compra_madre: boolean;
+
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_criador_origen_madre: string;
 
   @CreateDateColumn()
   fecha_registro: Date;

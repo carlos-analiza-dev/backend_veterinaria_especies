@@ -46,6 +46,23 @@ export class AnimalFincaService {
       esterelizado,
       complementos,
       medicamento,
+      nombre_padre,
+      arete_padre,
+      raza_padre,
+      nombre_criador_padre,
+      nombre_propietario_padre,
+      nombre_finca_origen_padre,
+      compra_padre,
+      nombre_criador_origen_padre,
+      nombre_madre,
+      arete_madre,
+      raza_madre,
+      nombre_criador_madre,
+      nombre_propietario_madre,
+      nombre_finca_origen_madre,
+      numero_parto_madre,
+      compra_madre,
+      nombre_criador_origen_madre,
     } = createAnimalFincaDto;
 
     try {
@@ -137,6 +154,23 @@ export class AnimalFincaService {
         tipo_alimentacion,
         complementos,
         medicamento,
+        nombre_padre,
+        arete_padre,
+        raza_padre,
+        nombre_criador_padre,
+        nombre_propietario_padre,
+        nombre_finca_origen_padre,
+        compra_padre,
+        nombre_criador_origen_padre,
+        arete_madre,
+        nombre_criador_madre,
+        nombre_criador_origen_madre,
+        compra_madre,
+        nombre_finca_origen_madre,
+        nombre_madre,
+        nombre_propietario_madre,
+        numero_parto_madre,
+        raza_madre,
       });
 
       await this.animalRepo.save(nuevoAnimal);
@@ -249,6 +283,27 @@ export class AnimalFincaService {
       tipo_alimentacion,
       castrado,
       esterelizado,
+      medicamento,
+      complementos,
+
+      nombre_padre,
+      arete_padre,
+      raza_padre,
+      nombre_criador_padre,
+      nombre_propietario_padre,
+      nombre_finca_origen_padre,
+      compra_padre,
+      nombre_criador_origen_padre,
+
+      nombre_madre,
+      arete_madre,
+      raza_madre,
+      nombre_criador_madre,
+      nombre_propietario_madre,
+      nombre_finca_origen_madre,
+      numero_parto_madre,
+      compra_madre,
+      nombre_criador_origen_madre,
     } = updateAnimalFincaDto;
 
     const animal = await this.animalRepo.findOne({
@@ -318,6 +373,7 @@ export class AnimalFincaService {
           edadCalculada = años;
         }
       }
+
       const fecha = new Date(fecha_nacimiento);
       if (isNaN(fecha.getTime())) {
         throw new BadRequestException('Fecha de nacimiento inválida');
@@ -326,11 +382,50 @@ export class AnimalFincaService {
       animal.edad_promedio = edadCalculada;
     }
 
+    const tieneAlgunAlimento =
+      Array.isArray(tipo_alimentacion) && tipo_alimentacion.length > 0;
+
+    if (!tieneAlgunAlimento) {
+      throw new BadRequestException(
+        'Debe ingresar al menos un tipo de alimento',
+      );
+    }
+
     if (observaciones !== undefined) animal.observaciones = observaciones;
+    if (medicamento !== undefined) animal.medicamento = medicamento;
     if (tipo_alimentacion !== undefined)
       animal.tipo_alimentacion = tipo_alimentacion;
+    if (complementos !== undefined) animal.complementos = complementos;
     if (castrado !== undefined) animal.castrado = castrado;
     if (esterelizado !== undefined) animal.esterelizado = esterelizado;
+
+    if (nombre_padre !== undefined) animal.nombre_padre = nombre_padre;
+    if (arete_padre !== undefined) animal.arete_padre = arete_padre;
+    if (raza_padre !== undefined) animal.raza_padre = raza_padre;
+    if (nombre_criador_padre !== undefined)
+      animal.nombre_criador_padre = nombre_criador_padre;
+    if (nombre_propietario_padre !== undefined)
+      animal.nombre_propietario_padre = nombre_propietario_padre;
+    if (nombre_finca_origen_padre !== undefined)
+      animal.nombre_finca_origen_padre = nombre_finca_origen_padre;
+    if (compra_padre !== undefined) animal.compra_padre = compra_padre;
+    if (nombre_criador_origen_padre !== undefined)
+      animal.nombre_criador_origen_padre = nombre_criador_origen_padre;
+
+    if (nombre_madre !== undefined) animal.nombre_madre = nombre_madre;
+    if (arete_madre !== undefined) animal.arete_madre = arete_madre;
+    if (raza_madre !== undefined) animal.raza_madre = raza_madre;
+    if (nombre_criador_madre !== undefined)
+      animal.nombre_criador_madre = nombre_criador_madre;
+    if (nombre_propietario_madre !== undefined)
+      animal.nombre_propietario_madre = nombre_propietario_madre;
+    if (nombre_finca_origen_madre !== undefined)
+      animal.nombre_finca_origen_madre = nombre_finca_origen_madre;
+    if (numero_parto_madre !== undefined)
+      animal.numero_parto_madre = numero_parto_madre;
+    if (compra_madre !== undefined) animal.compra_madre = compra_madre;
+    if (nombre_criador_origen_madre !== undefined)
+      animal.nombre_criador_origen_madre = nombre_criador_origen_madre;
 
     await this.animalRepo.save(animal);
 
