@@ -63,6 +63,8 @@ export class AnimalFincaService {
       numero_parto_madre,
       compra_madre,
       nombre_criador_origen_madre,
+      pureza,
+      tipo_reproduccion,
     } = createAnimalFincaDto;
 
     try {
@@ -154,6 +156,8 @@ export class AnimalFincaService {
         tipo_alimentacion,
         complementos,
         medicamento,
+        pureza,
+        tipo_reproduccion,
         nombre_padre,
         arete_padre,
         raza_padre,
@@ -285,6 +289,8 @@ export class AnimalFincaService {
       esterelizado,
       medicamento,
       complementos,
+      pureza,
+      tipo_reproduccion,
 
       nombre_padre,
       arete_padre,
@@ -426,6 +432,8 @@ export class AnimalFincaService {
     if (compra_madre !== undefined) animal.compra_madre = compra_madre;
     if (nombre_criador_origen_madre !== undefined)
       animal.nombre_criador_origen_madre = nombre_criador_origen_madre;
+    if (pureza !== undefined) animal.pureza = pureza;
+    if (tipo_reproduccion !== undefined) animal.pureza = pureza;
 
     await this.animalRepo.save(animal);
 

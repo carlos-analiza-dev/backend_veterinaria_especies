@@ -3,6 +3,7 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
+  IsEnum,
   IsIn,
   IsNotEmpty,
   IsNumber,
@@ -13,15 +14,20 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import {
+  PurezaEnum,
+  TipoReproduccionEnum,
+} from '../entities/animal_finca.entity';
 
 class TipoAlimentacionDto {
   @IsString({ message: 'El nombre del alimento debe ser un texto válido.' })
   alimento: string;
 
-  @IsIn(['comprado', 'producido'], {
-    message: 'El origen debe ser "comprado" o "producido".',
+  @IsIn(['comprado', 'producido', 'comprado y producido'], {
+    message:
+      'El origen debe ser "comprado" o "producido" o "comprado y producido".',
   })
-  origen: 'comprado' | 'producido';
+  origen: 'comprado' | 'producido' | 'comprado y producido';
 }
 
 class ComplementoDto {
@@ -47,6 +53,15 @@ export class CreateAnimalFincaDto {
   @ValidateNested({ each: true })
   @Type(() => TipoAlimentacionDto)
   tipo_alimentacion: TipoAlimentacionDto[];
+
+  @IsEnum(TipoReproduccionEnum)
+  tipo_reproduccion: TipoReproduccionEnum = TipoReproduccionEnum.NATURAL;
+
+  @IsEnum(PurezaEnum, {
+    message:
+      'La pureza debe ser uno de: Puro, Puro por cruza, 3/4 raza, 1/2 raza, Criollo',
+  })
+  pureza: PurezaEnum;
 
   @IsArray()
   @ValidateNested({ each: true })

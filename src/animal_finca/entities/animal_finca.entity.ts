@@ -10,6 +10,21 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+export enum TipoReproduccionEnum {
+  NATURAL = 'Monta natural',
+  INSEMINACION = 'Inseminación artificial',
+  EMBRION = 'Transferencia de embriones',
+  CLONACION = 'Clonacion',
+}
+
+export enum PurezaEnum {
+  PURO = 'Puro',
+  PURO_CRUZA = 'Puro por cruza',
+  TRES_CUARTOS = '3/4 raza',
+  MEDIA_RAZA = '1/2 raza',
+  CRIOLLO = 'Criollo',
+}
+
 @Entity('animal_finca')
 export class AnimalFinca {
   @PrimaryGeneratedColumn('uuid')
@@ -27,6 +42,20 @@ export class AnimalFinca {
   @Column({ type: 'varchar', length: 100, unique: true })
   identificador: string;
 
+  @Column({
+    type: 'enum',
+    enum: TipoReproduccionEnum,
+    default: TipoReproduccionEnum.NATURAL,
+  })
+  tipo_reproduccion: TipoReproduccionEnum;
+
+  @Column({
+    type: 'enum',
+    enum: PurezaEnum,
+    default: PurezaEnum.CRIOLLO,
+  })
+  pureza: PurezaEnum;
+
   @ManyToOne(() => RazaAnimal, (raza) => raza.animales, { eager: true })
   raza: RazaAnimal;
 
@@ -40,7 +69,10 @@ export class AnimalFinca {
   observaciones: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  tipo_alimentacion: { alimento: string; origen: 'comprado' | 'producido' }[];
+  tipo_alimentacion: {
+    alimento: string;
+    origen: 'comprado' | 'producido' | 'comprado y producido';
+  }[];
 
   @Column({ type: 'jsonb', nullable: true })
   complementos: { complemento: string }[];
