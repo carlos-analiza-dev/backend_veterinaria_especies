@@ -24,6 +24,7 @@ import { PaginationDto } from 'src/common/dto/pagination-common.dto';
 import { instanceToPlain } from 'class-transformer';
 import { UpdateCitaDto } from './dto/update-cita.dto';
 import { EstadoCita } from 'src/interfaces/estados_citas';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class CitasService {
@@ -42,6 +43,7 @@ export class CitasService {
     private readonly sub_servicio_repo: Repository<SubServicio>,
     @InjectRepository(User)
     private readonly user_repo: Repository<User>,
+    private readonly email_service: MailService,
   ) {}
 
   async create(createCitaDto: CreateCitaDto) {
@@ -142,6 +144,12 @@ export class CitasService {
       );
     }
 
+    if (cantidadAnimales <= 0) {
+      throw new BadRequestException(
+        'La cantidad de animales debe ser mayor a cero',
+      );
+    }
+
     const nuevaCita = this.citas_repo.create({
       animal: animal_exist,
       cantidadAnimales,
@@ -155,6 +163,19 @@ export class CitasService {
       totalPagar,
       user: usuario_exist,
     });
+
+    try {
+      await this.email_service.sendEmailCrearCita(
+        medico_exist.usuario.email,
+        medico_exist.usuario.name,
+        usuario_exist.name,
+        finca_exist.nombre_finca,
+        horaInicio,
+        horaFin,
+      );
+    } catch (emailError) {
+      throw new BadRequestException('Error enviando notificación de cita');
+    }
 
     return this.citas_repo.save(nuevaCita);
   }

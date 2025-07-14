@@ -8,7 +8,7 @@ import { CreateAnimalFincaDto } from './dto/create-animal_finca.dto';
 import { UpdateAnimalFincaDto } from './dto/update-animal_finca.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnimalFinca } from './entities/animal_finca.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from 'src/auth/entities/auth.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { PaginationDto } from 'src/common/dto/pagination-common.dto';
@@ -37,7 +37,7 @@ export class AnimalFincaService {
       fincaId,
       identificador,
       propietarioId,
-      raza,
+      razaIds,
       sexo,
       fecha_nacimiento,
       observaciones,
@@ -48,7 +48,7 @@ export class AnimalFincaService {
       medicamento,
       nombre_padre,
       arete_padre,
-      raza_padre,
+      razas_padre,
       nombre_criador_padre,
       nombre_propietario_padre,
       nombre_finca_origen_padre,
@@ -56,7 +56,7 @@ export class AnimalFincaService {
       nombre_criador_origen_padre,
       nombre_madre,
       arete_madre,
-      raza_madre,
+      razas_madre,
       nombre_criador_madre,
       nombre_propietario_madre,
       nombre_finca_origen_madre,
@@ -111,9 +111,30 @@ export class AnimalFincaService {
         }
       }
 
-      const raza_animal = await this.razaAnimal.findOneBy({ id: raza });
-      if (!raza_animal) {
-        throw new NotFoundException(`Raza no encontrada`);
+      const razas = await this.razaAnimal.findBy({ id: In(razaIds) });
+
+      if (razas.length !== razaIds.length) {
+        throw new NotFoundException('Una o más razas no fueron encontradas.');
+      }
+
+      if (!razaIds || razaIds.length === 0 || razaIds.length > 2) {
+        throw new BadRequestException(
+          'Debes ingresar al menos una raza y como máximo dos.',
+        );
+      }
+
+      const razasPadre = await this.razaAnimal.findBy({ id: In(razas_padre) });
+      if (razasPadre.length !== razas_padre.length) {
+        throw new NotFoundException(
+          'Una o más razas del padre no fueron encontradas.',
+        );
+      }
+
+      const razasMadre = await this.razaAnimal.findBy({ id: In(razas_madre) });
+      if (razasMadre.length !== razas_madre.length) {
+        throw new NotFoundException(
+          'Una o más razas de la madre no fueron encontradas.',
+        );
       }
 
       const existeIdentificador = await this.animalRepo.findOneBy({
@@ -144,7 +165,7 @@ export class AnimalFincaService {
         color,
         especie: especie_animal,
         identificador,
-        raza: raza_animal,
+        razas,
         sexo,
         edad_promedio: edadCalculada,
         fecha_nacimiento,
@@ -160,7 +181,7 @@ export class AnimalFincaService {
         tipo_reproduccion,
         nombre_padre,
         arete_padre,
-        raza_padre,
+        razas_padre: razasPadre,
         nombre_criador_padre,
         nombre_propietario_padre,
         nombre_finca_origen_padre,
@@ -174,7 +195,7 @@ export class AnimalFincaService {
         nombre_madre,
         nombre_propietario_madre,
         numero_parto_madre,
-        raza_madre,
+        razas_madre: razasMadre,
       });
 
       await this.animalRepo.save(nuevoAnimal);
@@ -186,7 +207,7 @@ export class AnimalFincaService {
   }
 
   async findAll(propietarioId: string, paginationDto: PaginationDto) {
-    const { fincaId, identificador } = paginationDto;
+    const { fincaId, identificador, especieId } = paginationDto;
 
     try {
       const propietario = await this.userRepo.findOne({
@@ -204,7 +225,9 @@ export class AnimalFincaService {
         .leftJoinAndSelect('animal.finca', 'finca')
         .leftJoinAndSelect('animal.propietario', 'propietario')
         .leftJoinAndSelect('animal.especie', 'especie')
-        .leftJoinAndSelect('animal.raza', 'raza')
+        .leftJoinAndSelect('animal.razas', 'razas')
+        .leftJoinAndSelect('animal.razas_madre', 'razas_madre')
+        .leftJoinAndSelect('animal.razas_padre', 'razas_padre')
         .where('animal.propietario = :propietarioId', { propietarioId });
 
       if (fincaId) {
@@ -215,6 +238,10 @@ export class AnimalFincaService {
         query.andWhere('LOWER(animal.identificador) LIKE :identificador', {
           identificador: `%${identificador.toLowerCase()}%`,
         });
+      }
+
+      if (especieId) {
+        query.andWhere('animal.especie = :especieId', { especieId });
       }
 
       const animales = await query.getMany();
@@ -241,11 +268,11 @@ export class AnimalFincaService {
         .createQueryBuilder('animal')
         .leftJoinAndSelect('animal.finca', 'finca')
         .leftJoinAndSelect('animal.especie', 'especie')
-        .leftJoinAndSelect('animal.raza', 'raza')
+        .leftJoinAndSelect('animal.razas', 'razas')
         .leftJoinAndSelect('animal.propietario', 'propietario')
         .where('finca.id = :fincaId', { fincaId })
         .andWhere('especie.id = :especieId', { especieId })
-        .andWhere('raza.id = :razaId', { razaId })
+        .andWhere('razas.id = :razaId', { razaId })
         .orderBy('animal.fecha_registro', 'DESC')
         .getMany();
 
@@ -279,7 +306,7 @@ export class AnimalFincaService {
       fincaId,
       identificador,
       propietarioId,
-      raza,
+      razaIds,
       sexo,
       edad_promedio,
       fecha_nacimiento,
@@ -294,7 +321,7 @@ export class AnimalFincaService {
 
       nombre_padre,
       arete_padre,
-      raza_padre,
+      razas_padre,
       nombre_criador_padre,
       nombre_propietario_padre,
       nombre_finca_origen_padre,
@@ -303,7 +330,7 @@ export class AnimalFincaService {
 
       nombre_madre,
       arete_madre,
-      raza_madre,
+      razas_madre,
       nombre_criador_madre,
       nombre_propietario_madre,
       nombre_finca_origen_madre,
@@ -314,7 +341,7 @@ export class AnimalFincaService {
 
     const animal = await this.animalRepo.findOne({
       where: { id },
-      relations: ['especie', 'raza', 'finca', 'propietario'],
+      relations: ['especie', 'razas', 'finca', 'propietario'],
     });
 
     if (!animal) {
@@ -331,12 +358,70 @@ export class AnimalFincaService {
       animal.especie = especie_animal;
     }
 
-    if (raza) {
-      const raza_animal = await this.razaAnimal.findOneBy({ id: raza });
-      if (!raza_animal) {
-        throw new NotFoundException(`Raza con ID ${raza} no encontrada`);
+    if (razaIds !== undefined) {
+      if (
+        !Array.isArray(razaIds) ||
+        razaIds.length === 0 ||
+        razaIds.length > 2
+      ) {
+        throw new BadRequestException('Debe ingresar entre 1 y 2 razas');
       }
-      animal.raza = raza_animal;
+
+      const razas = await this.razaAnimal.findBy({ id: In(razaIds) });
+
+      if (razas.length !== razaIds.length) {
+        throw new NotFoundException('Una o más razas no fueron encontradas');
+      }
+
+      animal.razas = razas;
+    }
+
+    if (razas_padre !== undefined) {
+      if (
+        !Array.isArray(razas_padre) ||
+        razas_padre.length === 0 ||
+        razas_padre.length > 2
+      ) {
+        throw new BadRequestException(
+          'Debe ingresar entre 1 y 2 razas para el padre',
+        );
+      }
+
+      const razasPadreEntities = await this.razaAnimal.findBy({
+        id: In(razas_padre),
+      });
+
+      if (razasPadreEntities.length !== razas_padre.length) {
+        throw new NotFoundException(
+          'Una o más razas del padre no fueron encontradas',
+        );
+      }
+
+      animal.razas_padre = razasPadreEntities;
+    }
+
+    if (razas_madre !== undefined) {
+      if (
+        !Array.isArray(razas_madre) ||
+        razas_madre.length === 0 ||
+        razas_madre.length > 2
+      ) {
+        throw new BadRequestException(
+          'Debe ingresar entre 1 y 2 razas para la madre',
+        );
+      }
+
+      const razasMadreEntities = await this.razaAnimal.findBy({
+        id: In(razas_madre),
+      });
+
+      if (razasMadreEntities.length !== razas_madre.length) {
+        throw new NotFoundException(
+          'Una o más razas de la madre no fueron encontradas',
+        );
+      }
+
+      animal.razas_madre = razasMadreEntities;
     }
 
     if (fincaId) {
@@ -407,7 +492,7 @@ export class AnimalFincaService {
 
     if (nombre_padre !== undefined) animal.nombre_padre = nombre_padre;
     if (arete_padre !== undefined) animal.arete_padre = arete_padre;
-    if (raza_padre !== undefined) animal.raza_padre = raza_padre;
+
     if (nombre_criador_padre !== undefined)
       animal.nombre_criador_padre = nombre_criador_padre;
     if (nombre_propietario_padre !== undefined)
@@ -420,7 +505,7 @@ export class AnimalFincaService {
 
     if (nombre_madre !== undefined) animal.nombre_madre = nombre_madre;
     if (arete_madre !== undefined) animal.arete_madre = arete_madre;
-    if (raza_madre !== undefined) animal.raza_madre = raza_madre;
+
     if (nombre_criador_madre !== undefined)
       animal.nombre_criador_madre = nombre_criador_madre;
     if (nombre_propietario_madre !== undefined)
@@ -433,7 +518,8 @@ export class AnimalFincaService {
     if (nombre_criador_origen_madre !== undefined)
       animal.nombre_criador_origen_madre = nombre_criador_origen_madre;
     if (pureza !== undefined) animal.pureza = pureza;
-    if (tipo_reproduccion !== undefined) animal.pureza = pureza;
+    if (tipo_reproduccion !== undefined)
+      animal.tipo_reproduccion = tipo_reproduccion;
 
     await this.animalRepo.save(animal);
 

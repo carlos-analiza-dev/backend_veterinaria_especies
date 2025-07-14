@@ -53,7 +53,7 @@ export class AuthController {
   @Get('veterinarios')
   @Auth()
   getVeterinarios() {
-    return this.authService.getVeterinarios();
+    return this.authService.getVeterinariosNoAsignados();
   }
 
   @Get('user/:userId')

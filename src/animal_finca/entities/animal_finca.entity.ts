@@ -6,15 +6,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 export enum TipoReproduccionEnum {
   NATURAL = 'Monta natural',
-  INSEMINACION = 'Inseminación artificial',
-  EMBRION = 'Transferencia de embriones',
-  CLONACION = 'Clonacion',
+  IATF = 'Inseminación aritificial a tiempo fijo (FIV)',
+  FIV = 'Fecundación in vitro (IATF)',
 }
 
 export enum PurezaEnum {
@@ -22,6 +23,7 @@ export enum PurezaEnum {
   PURO_CRUZA = 'Puro por cruza',
   TRES_CUARTOS = '3/4 raza',
   MEDIA_RAZA = '1/2 raza',
+  SIETE_OCTAVOSA = '7/8 raza',
   CRIOLLO = 'Criollo',
 }
 
@@ -56,8 +58,9 @@ export class AnimalFinca {
   })
   pureza: PurezaEnum;
 
-  @ManyToOne(() => RazaAnimal, (raza) => raza.animales, { eager: true })
-  raza: RazaAnimal;
+  @ManyToMany(() => RazaAnimal, { eager: true })
+  @JoinTable()
+  razas: RazaAnimal[];
 
   @Column({ type: 'int', nullable: true })
   edad_promedio: number;
@@ -88,8 +91,11 @@ export class AnimalFinca {
   @Column({ type: 'varchar', length: 100, nullable: true })
   arete_padre: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  raza_padre: string;
+  @ManyToMany(() => RazaAnimal, { cascade: true, eager: true })
+  @JoinTable({
+    name: 'animal_finca_razas_padre',
+  })
+  razas_padre: RazaAnimal[];
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombre_criador_padre: string;
@@ -113,8 +119,11 @@ export class AnimalFinca {
   @Column({ type: 'varchar', length: 100, nullable: true })
   arete_madre: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  raza_madre: string;
+  @ManyToMany(() => RazaAnimal, { cascade: true, eager: true })
+  @JoinTable({
+    name: 'animal_finca_razas_madre',
+  })
+  razas_madre: RazaAnimal[];
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombre_criador_madre: string;

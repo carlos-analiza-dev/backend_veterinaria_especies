@@ -24,4 +24,38 @@ export class MailService {
       throw new Error('Failed to send email');
     }
   }
+
+  async sendEmailCrearCita(
+    email_veterinario: string,
+    nombre_veterinario: string,
+    cliente: string,
+    nombre_finca: string,
+    hora_inicio: string,
+    hora_fin: string,
+  ) {
+    if (!email_veterinario)
+      throw new BadRequestException('No se proporcionó un correo');
+
+    try {
+      await this.mailerService.sendMail({
+        to: email_veterinario,
+        subject: 'Cita Pendiente',
+        template: './cita-pendiente',
+        context: {
+          email_veterinario,
+          nombre_veterinario,
+          cliente,
+          nombre_finca,
+          hora_inicio,
+          hora_fin,
+          year: new Date().getFullYear(),
+        },
+      });
+
+      return { message: 'Cita enviada correctamente' };
+    } catch (error) {
+      console.error('ERROR ENVIANDO EMAIL:', error);
+      throw new Error(`Failed to send cita: ${error.message}`);
+    }
+  }
 }

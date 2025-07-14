@@ -3,6 +3,7 @@ import { EspecieAnimal } from 'src/especie_animal/entities/especie_animal.entity
 import {
   Column,
   Entity,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -22,7 +23,7 @@ export class RazaAnimal {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @OneToMany(() => AnimalFinca, (animal) => animal.raza)
+  @ManyToMany(() => AnimalFinca, (animal) => animal.razas)
   animales: AnimalFinca[];
 
   @ManyToOne(() => EspecieAnimal, (especie) => especie.razas)

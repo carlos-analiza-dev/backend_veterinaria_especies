@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsDateString,
@@ -77,9 +79,10 @@ export class CreateAnimalFincaDto {
   @IsNotEmpty({ message: 'El identificador del animal es obligatorio' })
   identificador: string;
 
-  @IsUUID('4', { message: 'La raza debe ser un UUID válido' })
-  @IsNotEmpty({ message: 'La raza del animal es obligatoria' })
-  raza: string;
+  @IsArray({ message: 'Las razas deben ser un arreglo de IDs válidos' })
+  @IsUUID('4', { each: true, message: 'Cada raza debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'Debes ingresar al menos una raza' })
+  razaIds: string[];
 
   @IsOptional()
   @IsNumber({}, { message: 'La edad promedio debe ser un número' })
@@ -121,9 +124,10 @@ export class CreateAnimalFincaDto {
   @IsNotEmpty({ message: 'El arete del padre es obligatorio.' })
   arete_padre?: string;
 
-  @IsNotEmpty({ message: 'La raza del padre es obligatoria.' })
-  @IsString({ message: 'La raza del padre debe ser un texto válido.' })
-  raza_padre: string;
+  @IsArray({ message: 'Las razas deben ser un arreglo de IDs válidos' })
+  @IsUUID('4', { each: true, message: 'Cada raza debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'Debes ingresar al menos una raza al padre' })
+  razas_padre: string[];
 
   @IsNotEmpty({ message: 'El nombre del criador del padre es obligatorio.' })
   @IsString({
@@ -169,9 +173,10 @@ export class CreateAnimalFincaDto {
   @IsNotEmpty({ message: 'El arete de la madre es obligatorio.' })
   arete_madre: string;
 
-  @IsOptional()
-  @IsString({ message: 'La raza de la madre debe ser un texto válido.' })
-  raza_madre: string;
+  @IsArray({ message: 'Las razas deben ser un arreglo de IDs válidos' })
+  @IsUUID('4', { each: true, message: 'Cada raza debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'Debes ingresar al menos una raza a la madre' })
+  razas_madre: string[];
 
   @IsNotEmpty({ message: 'El nombre del criador de la madre es obligatorio.' })
   @IsString({

@@ -1,0 +1,84 @@
+<html lang='es'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Cita Médica Pendiente</title>
+    <style>
+      body { font-family: 'Arial', sans-serif; color: #333; background-color:
+      #f7fafc; margin: 0; padding: 0; line-height: 1.6; } .container {
+      max-width: 600px; margin: 20px auto; background-color: #ffffff; padding:
+      30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0; } .header { text-align: center; padding-bottom:
+      20px; border-bottom: 1px solid #e2e8f0; margin-bottom: 25px; } h1 { color:
+      #2b6cb0; font-size: 24px; margin: 0 0 10px 0; } .logo { max-width: 150px;
+      margin-bottom: 15px; } .appointment-card { background-color: #ebf8ff;
+      border-left: 4px solid #4299e1; padding: 15px; border-radius: 4px;
+      margin-bottom: 25px; } .detail-row { display: flex; margin-bottom: 10px; }
+      .detail-label { font-weight: 600; color: #4a5568; width: 120px; }
+      .detail-value { color: #2d3748; } .footer { font-size: 14px; color:
+      #718096; text-align: center; margin-top: 30px; padding-top: 20px;
+      border-top: 1px solid #e2e8f0; } .button { display: inline-block;
+      background-color: #4299e1; color: white; text-decoration: none; padding:
+      12px 24px; border-radius: 4px; font-weight: 500; margin: 20px 0; }
+      .button:hover { background-color: #3182ce; } .note { font-size: 14px;
+      color: #718096; margin-top: 25px; }
+    </style>
+  </head>
+  <body>
+    <table width='100%' cellspacing='0' cellpadding='0' border='0'>
+      <tr>
+        <td align='center'>
+          <div class='container'>
+            <div class='header'>
+              <!-- Reemplaza con tu logo o imagen -->
+              <img src='https://ejemplo.com/logo.png' alt='Logo' class='logo' />
+              <h1>Nueva Cita Médica Programada</h1>
+            </div>
+
+            <p>Hola Dr./Dra. {{nombre_veterinario}},</p>
+            <p>Se ha programado una nueva cita médica que requiere su atención:</p>
+
+            <div class='appointment-card'>
+              <div class='detail-row'>
+                <span class='detail-label'>Cliente:</span>
+                <span class='detail-value'>{{cliente}}</span>
+              </div>
+              <div class='detail-row'>
+                <span class='detail-label'>Finca:</span>
+                <span class='detail-value'>{{nombre_finca}}</span>
+              </div>
+              <div class='detail-row'>
+                <span class='detail-label'>Fecha/Hora:</span>
+                <span class='detail-value'>{{hora_inicio}} - {{hora_fin}}</span>
+              </div>
+            </div>
+
+            <p>Por favor confirme su disponibilidad para esta cita lo antes
+              posible.</p>
+
+            <p class='note'>
+              <strong>Nota:</strong>
+              Este es un mensaje automático, por favor no responda directamente
+              a este correo.
+            </p>
+
+            <div class='footer'>
+              <p>© {{year}} VeterinariaApp. Todos los derechos reservados.</p>
+              <p>
+                <a
+                  href='https://tuapp.com'
+                  style='color: #4299e1; text-decoration: none;'
+                >Visite nuestro sitio</a>
+                |
+                <a
+                  href='https://tuapp.com/contacto'
+                  style='color: #4299e1; text-decoration: none;'
+                >Contacto</a>
+              </p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

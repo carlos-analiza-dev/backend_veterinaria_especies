@@ -25,5 +25,9 @@ export class PaginationDto {
 
   @IsOptional()
   @IsString()
+  especieId?: string;
+
+  @IsOptional()
+  @IsString()
   identificador?: string;
 }

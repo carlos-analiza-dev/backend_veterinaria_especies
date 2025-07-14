@@ -9,6 +9,7 @@ import { HorariosMedico } from 'src/horarios_medicos/entities/horarios_medico.en
 import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 import { SubServicio } from 'src/sub_servicios/entities/sub_servicio.entity';
 import { User } from 'src/auth/entities/auth.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Module({
   controllers: [CitasController],
@@ -23,6 +24,6 @@ import { User } from 'src/auth/entities/auth.entity';
       User,
     ]),
   ],
-  providers: [CitasService],
+  providers: [CitasService, MailService],
 })
 export class CitasModule {}

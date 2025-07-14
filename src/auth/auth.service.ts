@@ -210,24 +210,25 @@ export class AuthService {
     }
   }
 
-  async getVeterinarios() {
+  async getVeterinariosNoAsignados() {
     try {
-      const veterinarios = await this.userRepository
+      const veterinariosNoAsignados = await this.userRepository
         .createQueryBuilder('user')
         .leftJoinAndSelect('user.role', 'role')
+        .leftJoin('medicos', 'medico', 'medico.usuarioId = user.id')
         .where('user.isActive = :isActive', { isActive: true })
         .andWhere('role.name = :roleName', { roleName: 'Veterinario' })
+        .andWhere('medico.id IS NULL')
         .orderBy('user.name', 'ASC')
         .getMany();
 
-      if (!veterinarios || veterinarios.length === 0) {
+      if (!veterinariosNoAsignados || veterinariosNoAsignados.length === 0) {
         throw new NotFoundException(
-          'No se encontraron usuarios con rol de veterinario.',
+          'No se encontraron veterinarios disponibles para asignar como médicos.',
         );
       }
 
-      const users = instanceToPlain(veterinarios);
-      return users;
+      return instanceToPlain(veterinariosNoAsignados);
     } catch (error) {
       throw error;
     }
