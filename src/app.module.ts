@@ -19,10 +19,17 @@ import { SubServiciosModule } from './sub_servicios/sub_servicios.module';
 import { CitasModule } from './citas/citas.module';
 import { MedicosModule } from './medicos/medicos.module';
 import { HorariosMedicosModule } from './horarios_medicos/horarios_medicos.module';
+import { ProfileImagesModule } from './profile_images/profile_images.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       database: process.env.DB_NAME,
@@ -52,6 +59,8 @@ import { HorariosMedicosModule } from './horarios_medicos/horarios_medicos.modul
     MedicosModule,
 
     HorariosMedicosModule,
+
+    ProfileImagesModule,
   ],
   controllers: [],
   providers: [],

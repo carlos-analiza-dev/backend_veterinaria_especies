@@ -4,6 +4,7 @@ import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
+import { ProfileImage } from 'src/profile_images/entities/profile_image.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import {
   Column,
@@ -71,6 +72,19 @@ export class User {
 
   @OneToMany(() => AnimalFinca, (animal) => animal.propietario)
   animales: AnimalFinca[];
+
+  @OneToMany(() => ProfileImage, (profileImage) => profileImage.user, {
+    eager: true,
+  })
+  profileImages: ProfileImage[];
+
+  get currentProfileImage(): ProfileImage | null {
+    if (!this.profileImages || this.profileImages.length === 0) return null;
+
+    return this.profileImages.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    )[0];
+  }
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -125,7 +125,19 @@ export class AuthService {
     const { email, password } = loginUserDto;
 
     try {
-      const user = await this.userRepository.findOne({ where: { email } });
+      const user = await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.role', 'role')
+        .leftJoinAndSelect('user.pais', 'pais')
+        .leftJoinAndSelect('pais.departamentos', 'departamentos')
+        .leftJoinAndSelect('departamentos.municipios', 'municipios')
+        .leftJoinAndSelect('user.departamento', 'departamento')
+        .leftJoinAndSelect('departamento.municipios', 'dpt_municipios')
+        .leftJoinAndSelect('user.municipio', 'municipio')
+        .leftJoinAndSelect('user.profileImages', 'profileImages')
+        .where('user.email = :email', { email })
+        .orderBy('profileImages.createdAt', 'DESC')
+        .getOne();
 
       if (!user)
         throw new UnauthorizedException('Credenciales incorrectas (email)');
@@ -181,7 +193,8 @@ export class AuthService {
     try {
       const queryBuilder = this.userRepository
         .createQueryBuilder('user')
-        .leftJoinAndSelect('user.role', 'role');
+        .leftJoinAndSelect('user.role', 'role')
+        .leftJoinAndSelect('user.profileImages', 'profileImages');
 
       if (name) {
         queryBuilder.andWhere('user.name ILIKE :name', { name: `%${name}%` });
@@ -193,6 +206,7 @@ export class AuthService {
 
       const [usuarios, total] = await queryBuilder
         .orderBy('user.name', 'ASC')
+        .addOrderBy('profileImages.createdAt', 'DESC')
         .skip(offset)
         .take(limit)
         .getManyAndCount();

@@ -12,6 +12,7 @@ import { MailService } from 'src/mail/mail.service';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { ProfileImage } from 'src/profile_images/entities/profile_image.entity';
 
 @Module({
   controllers: [AuthController],
@@ -25,6 +26,7 @@ import { Role } from 'src/roles/entities/role.entity';
       DepartamentosPai,
       MunicipiosDepartamentosPai,
       Role,
+      ProfileImage,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
