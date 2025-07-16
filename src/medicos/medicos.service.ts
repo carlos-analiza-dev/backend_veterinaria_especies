@@ -92,11 +92,13 @@ export class MedicosService {
       const [medicos, total] = await this.medico_repo
         .createQueryBuilder('medico')
         .leftJoinAndSelect('medico.usuario', 'usuario')
+        .leftJoinAndSelect('usuario.profileImages', 'profileImages')
         .leftJoinAndSelect('medico.areas_trabajo', 'areas_trabajo')
         .leftJoinAndSelect('medico.horarios', 'horarios')
         .andWhere('LOWER(usuario.name) LIKE :name', {
           name: `%${name.toLowerCase()}%`,
         })
+        .addOrderBy('profileImages.createdAt', 'DESC')
         .skip(offset)
         .take(limit)
         .getManyAndCount();

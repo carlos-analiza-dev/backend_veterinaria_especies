@@ -1,31 +1,37 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ImagesAminale } from './entities/images_aminale.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { ProfileImage } from './entities/profile_image.entity';
-import { User } from 'src/auth/entities/auth.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 
 @Injectable()
-export class ProfileImagesService {
+export class ImagesAminalesService {
   constructor(
-    @InjectRepository(ProfileImage)
-    private readonly profileImageRepo: Repository<ProfileImage>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
+    @InjectRepository(ImagesAminale)
+    private readonly profileImageRepo: Repository<ImagesAminale>,
+    @InjectRepository(AnimalFinca)
+    private readonly animalRepo: Repository<AnimalFinca>,
   ) {}
 
   async uploadProfileImage(
-    userId: string,
+    animalId: string,
     file: Express.Multer.File,
-  ): Promise<ProfileImage> {
-    const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+  ): Promise<ImagesAminale> {
+    const animal = await this.animalRepo.findOne({ where: { id: animalId } });
+    if (!animal) {
+      throw new NotFoundException('Animal no encontrado');
     }
 
-    const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'profile');
+    const uploadDir = path.join(
+      __dirname,
+      '..',
+      '..',
+      'uploads',
+      'profile_animal',
+    );
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -37,21 +43,23 @@ export class ProfileImagesService {
     fs.writeFileSync(filePath, file.buffer);
 
     const baseUrl = process.env.APP_URL;
-    const fileUrl = `${baseUrl}/uploads/profile/${fileName}`;
+    const fileUrl = `${baseUrl}/uploads/profile_animal/${fileName}`;
 
     const profileImage = this.profileImageRepo.create({
       url: fileUrl,
       key: fileName,
       mimeType: file.mimetype,
-      user,
+      animal,
     });
 
     return this.profileImageRepo.save(profileImage);
   }
 
-  async getCurrentProfileImage(userId: string): Promise<ProfileImage | null> {
-    const user = await this.userRepo.findOne({
-      where: { id: userId },
+  async getCurrentProfileImage(
+    animalId: string,
+  ): Promise<ImagesAminale | null> {
+    const user = await this.animalRepo.findOne({
+      where: { id: animalId },
       relations: ['profileImages'],
     });
 
@@ -62,11 +70,11 @@ export class ProfileImagesService {
     return user.currentProfileImage;
   }
 
-  async getImagesByUser(userId: string): Promise<ProfileImage[]> {
-    const user = await this.userRepo
+  async getImagesByUser(animalId: string): Promise<ImagesAminale[]> {
+    const user = await this.animalRepo
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.profileImages', 'profileImages')
-      .where('user.id = :userId', { userId })
+      .where('user.id = :animalId', { animalId })
       .orderBy('profileImages.createdAt', 'DESC')
       .getOne();
 
@@ -90,7 +98,7 @@ export class ProfileImagesService {
       '..',
       '..',
       'uploads',
-      'profile',
+      'profile_animal',
       image.key,
     );
 

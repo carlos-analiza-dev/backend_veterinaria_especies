@@ -49,6 +49,7 @@ export class AnimalFincaService {
       nombre_padre,
       arete_padre,
       razas_padre,
+      pureza_padre,
       nombre_criador_padre,
       nombre_propietario_padre,
       nombre_finca_origen_padre,
@@ -57,6 +58,7 @@ export class AnimalFincaService {
       nombre_madre,
       arete_madre,
       razas_madre,
+      pureza_madre,
       nombre_criador_madre,
       nombre_propietario_madre,
       nombre_finca_origen_madre,
@@ -161,6 +163,21 @@ export class AnimalFincaService {
         }
       }
 
+      for (const alimentacion of tipo_alimentacion) {
+        if (alimentacion.origen === 'comprado y producido') {
+          const porcentaje_comprado = alimentacion.porcentaje_comprado ?? 0;
+          const porcentaje_producido = alimentacion.porcentaje_producido ?? 0;
+
+          const total = porcentaje_comprado + porcentaje_producido;
+
+          if (total !== 100) {
+            throw new BadRequestException(
+              `El alimento "${alimentacion.alimento}" tiene porcentajes que no suman 100%. Comprado: ${porcentaje_comprado}%, Producido: ${porcentaje_producido}%`,
+            );
+          }
+        }
+      }
+
       const nuevoAnimal = this.animalRepo.create({
         color,
         especie: especie_animal,
@@ -182,6 +199,7 @@ export class AnimalFincaService {
         nombre_padre,
         arete_padre,
         razas_padre: razasPadre,
+        pureza_padre,
         nombre_criador_padre,
         nombre_propietario_padre,
         nombre_finca_origen_padre,
@@ -196,6 +214,7 @@ export class AnimalFincaService {
         nombre_propietario_madre,
         numero_parto_madre,
         razas_madre: razasMadre,
+        pureza_madre,
       });
 
       await this.animalRepo.save(nuevoAnimal);
@@ -207,7 +226,13 @@ export class AnimalFincaService {
   }
 
   async findAll(propietarioId: string, paginationDto: PaginationDto) {
-    const { fincaId, identificador, especieId } = paginationDto;
+    const {
+      fincaId,
+      identificador,
+      especieId,
+      limit = 5,
+      offset = 0,
+    } = paginationDto;
 
     try {
       const propietario = await this.userRepo.findOne({
@@ -228,6 +253,7 @@ export class AnimalFincaService {
         .leftJoinAndSelect('animal.razas', 'razas')
         .leftJoinAndSelect('animal.razas_madre', 'razas_madre')
         .leftJoinAndSelect('animal.razas_padre', 'razas_padre')
+        .leftJoinAndSelect('animal.profileImages', 'profileImages')
         .where('animal.propietario = :propietarioId', { propietarioId });
 
       if (fincaId) {
@@ -244,7 +270,13 @@ export class AnimalFincaService {
         query.andWhere('animal.especie = :especieId', { especieId });
       }
 
-      const animales = await query.getMany();
+      const total = await query.getCount();
+
+      const animales = await query
+        .orderBy('animal.fecha_registro', 'DESC')
+        .skip(offset)
+        .take(limit)
+        .getMany();
 
       if (!animales || animales.length === 0) {
         throw new BadRequestException(
@@ -252,7 +284,12 @@ export class AnimalFincaService {
         );
       }
 
-      return instanceToPlain(animales);
+      return instanceToPlain({
+        data: animales,
+        total,
+        limit,
+        offset,
+      });
     } catch (error) {
       throw error;
     }
@@ -322,6 +359,7 @@ export class AnimalFincaService {
       nombre_padre,
       arete_padre,
       razas_padre,
+      pureza_padre,
       nombre_criador_padre,
       nombre_propietario_padre,
       nombre_finca_origen_padre,
@@ -331,6 +369,7 @@ export class AnimalFincaService {
       nombre_madre,
       arete_madre,
       razas_madre,
+      pureza_madre,
       nombre_criador_madre,
       nombre_propietario_madre,
       nombre_finca_origen_madre,
@@ -518,6 +557,8 @@ export class AnimalFincaService {
     if (nombre_criador_origen_madre !== undefined)
       animal.nombre_criador_origen_madre = nombre_criador_origen_madre;
     if (pureza !== undefined) animal.pureza = pureza;
+    if (pureza_padre !== undefined) animal.pureza_padre = pureza_padre;
+    if (pureza_madre !== undefined) animal.pureza_madre = pureza_madre;
     if (tipo_reproduccion !== undefined)
       animal.tipo_reproduccion = tipo_reproduccion;
 

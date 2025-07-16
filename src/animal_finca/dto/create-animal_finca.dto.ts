@@ -13,7 +13,9 @@ import {
   IsString,
   IsUUID,
   Length,
+  Max,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import {
@@ -21,15 +23,21 @@ import {
   TipoReproduccionEnum,
 } from '../entities/animal_finca.entity';
 
-class TipoAlimentacionDto {
+export class TipoAlimentacionDto {
   @IsString({ message: 'El nombre del alimento debe ser un texto válido.' })
   alimento: string;
 
   @IsIn(['comprado', 'producido', 'comprado y producido'], {
     message:
-      'El origen debe ser "comprado" o "producido" o "comprado y producido".',
+      'El origen debe ser "comprado", "producido" o "comprado y producido".',
   })
   origen: 'comprado' | 'producido' | 'comprado y producido';
+
+  @ValidateIf((o) => o.origen === 'comprado y producido')
+  porcentaje_comprado?: number;
+
+  @ValidateIf((o) => o.origen === 'comprado y producido')
+  porcentaje_producido?: number;
 }
 
 class ComplementoDto {
@@ -129,6 +137,12 @@ export class CreateAnimalFincaDto {
   @IsNotEmpty({ message: 'Debes ingresar al menos una raza al padre' })
   razas_padre: string[];
 
+  @IsEnum(PurezaEnum, {
+    message:
+      'La pureza del padre debe ser uno de: 1 raza, 7/8 raza, 3/4 raza, 1/2 raza, 5/8 raza',
+  })
+  pureza_padre: PurezaEnum;
+
   @IsNotEmpty({ message: 'El nombre del criador del padre es obligatorio.' })
   @IsString({
     message: 'El nombre del criador del padre debe ser un texto válido.',
@@ -177,6 +191,12 @@ export class CreateAnimalFincaDto {
   @IsUUID('4', { each: true, message: 'Cada raza debe ser un UUID válido' })
   @IsNotEmpty({ message: 'Debes ingresar al menos una raza a la madre' })
   razas_madre: string[];
+
+  @IsEnum(PurezaEnum, {
+    message:
+      'La pureza de la madre debe ser uno de: 1 raza, 7/8 raza, 3/4 raza, 1/2 raza, 5/8 raza',
+  })
+  pureza_madre: PurezaEnum;
 
   @IsNotEmpty({ message: 'El nombre del criador de la madre es obligatorio.' })
   @IsString({

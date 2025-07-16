@@ -22,6 +22,7 @@ import { HorariosMedicosModule } from './horarios_medicos/horarios_medicos.modul
 import { ProfileImagesModule } from './profile_images/profile_images.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ImagesAminalesModule } from './images_aminales/images_aminales.module';
 
 @Module({
   imports: [
@@ -61,6 +62,8 @@ import { join } from 'path';
     HorariosMedicosModule,
 
     ProfileImagesModule,
+
+    ImagesAminalesModule,
   ],
   controllers: [],
   providers: [],

@@ -1,6 +1,7 @@
 import { User } from 'src/auth/entities/auth.entity';
 import { EspecieAnimal } from 'src/especie_animal/entities/especie_animal.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
+import { ImagesAminale } from 'src/images_aminales/entities/images_aminale.entity';
 import { RazaAnimal } from 'src/raza_animal/entities/raza_animal.entity';
 import {
   Column,
@@ -9,22 +10,22 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 export enum TipoReproduccionEnum {
   NATURAL = 'Monta natural',
-  IATF = 'Inseminación aritificial a tiempo fijo (FIV)',
-  FIV = 'Fecundación in vitro (IATF)',
+  IATF = 'Inseminación aritificial a tiempo fijo (IATF)',
+  FIV = 'Fecundación in vitro (FIV)',
 }
 
 export enum PurezaEnum {
-  PURO = 'Puro',
-  PURO_CRUZA = 'Puro por cruza',
-  TRES_CUARTOS = '3/4 raza',
-  MEDIA_RAZA = '1/2 raza',
+  UNO = '1 raza',
   SIETE_OCTAVOSA = '7/8 raza',
-  CRIOLLO = 'Criollo',
+  TRES_CUARTOS = '3/4 raza',
+  CINCO_OCTAVOS = '5/8 raza',
+  MEDIA_RAZA = '1/2 raza',
 }
 
 @Entity('animal_finca')
@@ -54,7 +55,7 @@ export class AnimalFinca {
   @Column({
     type: 'enum',
     enum: PurezaEnum,
-    default: PurezaEnum.CRIOLLO,
+    default: PurezaEnum.UNO,
   })
   pureza: PurezaEnum;
 
@@ -75,6 +76,8 @@ export class AnimalFinca {
   tipo_alimentacion: {
     alimento: string;
     origen: 'comprado' | 'producido' | 'comprado y producido';
+    porcentaje_comprado?: number;
+    porcentaje_producido?: number;
   }[];
 
   @Column({ type: 'jsonb', nullable: true })
@@ -96,6 +99,13 @@ export class AnimalFinca {
     name: 'animal_finca_razas_padre',
   })
   razas_padre: RazaAnimal[];
+
+  @Column({
+    type: 'enum',
+    enum: PurezaEnum,
+    default: PurezaEnum.UNO,
+  })
+  pureza_padre: PurezaEnum;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombre_criador_padre: string;
@@ -124,6 +134,13 @@ export class AnimalFinca {
     name: 'animal_finca_razas_madre',
   })
   razas_madre: RazaAnimal[];
+
+  @Column({
+    type: 'enum',
+    enum: PurezaEnum,
+    default: PurezaEnum.UNO,
+  })
+  pureza_madre: PurezaEnum;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   nombre_criador_madre: string;
@@ -160,4 +177,17 @@ export class AnimalFinca {
 
   @Column({ type: 'boolean', default: false })
   esterelizado: boolean;
+
+  @OneToMany(() => ImagesAminale, (profileImage) => profileImage.animal, {
+    eager: true,
+  })
+  profileImages: ImagesAminale[];
+
+  get currentProfileImage(): ImagesAminale | null {
+    if (!this.profileImages || this.profileImages.length === 0) return null;
+
+    return this.profileImages.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    )[0];
+  }
 }
