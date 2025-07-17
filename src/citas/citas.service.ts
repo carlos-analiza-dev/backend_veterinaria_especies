@@ -196,7 +196,7 @@ export class CitasService {
       ),
     );
 
-    if (fechaSolicitud < fechaActualUTC) {
+    if (fechaSolicitud <= fechaActualUTC) {
       return [];
     }
 

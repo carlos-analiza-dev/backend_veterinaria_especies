@@ -53,8 +53,9 @@ export class AnimalFincaService {
       nombre_criador_padre,
       nombre_propietario_padre,
       nombre_finca_origen_padre,
-      compra_padre,
-      nombre_criador_origen_padre,
+      compra_animal,
+      nombre_criador_origen_animal,
+
       nombre_madre,
       arete_madre,
       razas_madre,
@@ -63,8 +64,6 @@ export class AnimalFincaService {
       nombre_propietario_madre,
       nombre_finca_origen_madre,
       numero_parto_madre,
-      compra_madre,
-      nombre_criador_origen_madre,
       pureza,
       tipo_reproduccion,
     } = createAnimalFincaDto;
@@ -196,6 +195,8 @@ export class AnimalFincaService {
         medicamento,
         pureza,
         tipo_reproduccion,
+        compra_animal,
+        nombre_criador_origen_animal,
         nombre_padre,
         arete_padre,
         razas_padre: razasPadre,
@@ -203,12 +204,10 @@ export class AnimalFincaService {
         nombre_criador_padre,
         nombre_propietario_padre,
         nombre_finca_origen_padre,
-        compra_padre,
-        nombre_criador_origen_padre,
+
         arete_madre,
         nombre_criador_madre,
-        nombre_criador_origen_madre,
-        compra_madre,
+
         nombre_finca_origen_madre,
         nombre_madre,
         nombre_propietario_madre,
@@ -355,6 +354,8 @@ export class AnimalFincaService {
       complementos,
       pureza,
       tipo_reproduccion,
+      compra_animal,
+      nombre_criador_origen_animal,
 
       nombre_padre,
       arete_padre,
@@ -363,8 +364,6 @@ export class AnimalFincaService {
       nombre_criador_padre,
       nombre_propietario_padre,
       nombre_finca_origen_padre,
-      compra_padre,
-      nombre_criador_origen_padre,
 
       nombre_madre,
       arete_madre,
@@ -374,8 +373,6 @@ export class AnimalFincaService {
       nombre_propietario_madre,
       nombre_finca_origen_madre,
       numero_parto_madre,
-      compra_madre,
-      nombre_criador_origen_madre,
     } = updateAnimalFincaDto;
 
     const animal = await this.animalRepo.findOne({
@@ -521,6 +518,38 @@ export class AnimalFincaService {
       );
     }
 
+    if (!Array.isArray(tipo_alimentacion) || tipo_alimentacion.length === 0) {
+      throw new BadRequestException(
+        'Debe ingresar al menos un tipo de alimento',
+      );
+    }
+
+    for (const alimentacion of tipo_alimentacion) {
+      if (alimentacion.origen === 'comprado y producido') {
+        const porcentaje_comprado = alimentacion.porcentaje_comprado ?? 0;
+        const porcentaje_producido = alimentacion.porcentaje_producido ?? 0;
+
+        const total = porcentaje_comprado + porcentaje_producido;
+
+        if (total !== 100) {
+          throw new BadRequestException(
+            `El alimento "${alimentacion.alimento}" tiene porcentajes que no suman 100%. Comprado: ${porcentaje_comprado}%, Producido: ${porcentaje_producido}%`,
+          );
+        }
+      }
+    }
+
+    if (tipo_alimentacion !== undefined) {
+      for (const alimentacion of tipo_alimentacion) {
+        if (alimentacion.origen !== 'comprado y producido') {
+          delete alimentacion.porcentaje_comprado;
+          delete alimentacion.porcentaje_producido;
+        }
+      }
+
+      animal.tipo_alimentacion = tipo_alimentacion;
+    }
+
     if (observaciones !== undefined) animal.observaciones = observaciones;
     if (medicamento !== undefined) animal.medicamento = medicamento;
     if (tipo_alimentacion !== undefined)
@@ -538,9 +567,6 @@ export class AnimalFincaService {
       animal.nombre_propietario_padre = nombre_propietario_padre;
     if (nombre_finca_origen_padre !== undefined)
       animal.nombre_finca_origen_padre = nombre_finca_origen_padre;
-    if (compra_padre !== undefined) animal.compra_padre = compra_padre;
-    if (nombre_criador_origen_padre !== undefined)
-      animal.nombre_criador_origen_padre = nombre_criador_origen_padre;
 
     if (nombre_madre !== undefined) animal.nombre_madre = nombre_madre;
     if (arete_madre !== undefined) animal.arete_madre = arete_madre;
@@ -553,10 +579,10 @@ export class AnimalFincaService {
       animal.nombre_finca_origen_madre = nombre_finca_origen_madre;
     if (numero_parto_madre !== undefined)
       animal.numero_parto_madre = numero_parto_madre;
-    if (compra_madre !== undefined) animal.compra_madre = compra_madre;
-    if (nombre_criador_origen_madre !== undefined)
-      animal.nombre_criador_origen_madre = nombre_criador_origen_madre;
     if (pureza !== undefined) animal.pureza = pureza;
+    if (compra_animal !== undefined) animal.compra_animal = compra_animal;
+    if (nombre_criador_origen_animal !== undefined)
+      animal.nombre_criador_origen_animal = nombre_criador_origen_animal;
     if (pureza_padre !== undefined) animal.pureza_padre = pureza_padre;
     if (pureza_madre !== undefined) animal.pureza_madre = pureza_madre;
     if (tipo_reproduccion !== undefined)

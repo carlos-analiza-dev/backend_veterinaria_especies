@@ -21,11 +21,11 @@ export enum TipoReproduccionEnum {
 }
 
 export enum PurezaEnum {
-  UNO = '1 raza',
-  SIETE_OCTAVOSA = '7/8 raza',
-  TRES_CUARTOS = '3/4 raza',
-  CINCO_OCTAVOS = '5/8 raza',
-  MEDIA_RAZA = '1/2 raza',
+  UNO = '1',
+  SIETE_OCTAVOSA = '7/8',
+  TRES_CUARTOS = '3/4',
+  CINCO_OCTAVOS = '5/8',
+  MEDIA_RAZA = '1/2',
 }
 
 @Entity('animal_finca')
@@ -86,6 +86,12 @@ export class AnimalFinca {
   @Column({ type: 'varchar', length: 100, default: 'Sin medicamento' })
   medicamento: string;
 
+  @Column({ type: 'boolean', default: false })
+  compra_animal: boolean;
+
+  @Column({ type: 'varchar', length: 100, default: 'N/D' })
+  nombre_criador_origen_animal: string;
+
   /* DATOS PADRE */
 
   @Column({ type: 'varchar', length: 100, default: 'N/D' })
@@ -115,12 +121,6 @@ export class AnimalFinca {
 
   @Column({ type: 'varchar', length: 100, default: 'N/D' })
   nombre_finca_origen_padre: string;
-
-  @Column({ type: 'boolean', default: false })
-  compra_padre: boolean;
-
-  @Column({ type: 'varchar', length: 100, default: 'N/D' })
-  nombre_criador_origen_padre: string;
 
   /* DATOS MADRE */
   @Column({ type: 'varchar', length: 100, default: 'N/D' })
@@ -153,12 +153,6 @@ export class AnimalFinca {
 
   @Column({ type: 'int', default: 1 })
   numero_parto_madre: number;
-
-  @Column({ type: 'boolean', default: false })
-  compra_madre: boolean;
-
-  @Column({ type: 'varchar', length: 100, default: 'N/D' })
-  nombre_criador_origen_madre: string;
 
   @CreateDateColumn()
   fecha_registro: Date;

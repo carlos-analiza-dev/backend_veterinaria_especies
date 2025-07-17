@@ -123,6 +123,19 @@ export class CreateAnimalFincaDto {
   @IsBoolean({ message: 'El valor de esterilizado debe ser verdadero o falso' })
   esterelizado?: boolean;
 
+  @IsOptional()
+  @IsBoolean({
+    message: 'El valor de compra del padre debe ser verdadero o falso.',
+  })
+  compra_animal?: boolean;
+
+  @IsOptional()
+  @IsString({
+    message:
+      'El nombre del criador de origen del padre debe ser un texto válido.',
+  })
+  nombre_criador_origen_animal?: string;
+
   // --- DATOS PADRE ---
   @IsOptional()
   @IsString({ message: 'El nombre del padre debe ser un texto válido.' })
@@ -164,19 +177,6 @@ export class CreateAnimalFincaDto {
     message: 'El nombre de la finca del padre debe ser un texto válido.',
   })
   nombre_finca_origen_padre: string;
-
-  @IsOptional()
-  @IsBoolean({
-    message: 'El valor de compra del padre debe ser verdadero o falso.',
-  })
-  compra_padre?: boolean;
-
-  @IsOptional()
-  @IsString({
-    message:
-      'El nombre del criador de origen del padre debe ser un texto válido.',
-  })
-  nombre_criador_origen_padre?: string;
 
   // --- DATOS MADRE ---
   @IsOptional()
@@ -226,17 +226,4 @@ export class CreateAnimalFincaDto {
     { message: 'El número de parto de la madre debe ser un número.' },
   )
   numero_parto_madre: number;
-
-  @IsOptional()
-  @IsBoolean({
-    message: 'El valor de compra de la madre debe ser verdadero o falso.',
-  })
-  compra_madre?: boolean;
-
-  @IsOptional()
-  @IsString({
-    message:
-      'El nombre del criador de origen de la madre debe ser un texto válido.',
-  })
-  nombre_criador_origen_madre?: string;
 }
