@@ -12,4 +12,57 @@ services:
       POSTGRES_DB: ${DB_NAME}
     container_name: veterinariadb
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - vet-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_veterinaria
+    restart: always
+    ports:
+      - '${PORT}:${PORT}'
+    volumes:
+      - ./uploads:/app/uploads
+
+    environment:
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      JWT_SECRET: ${JWT_SECRET}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      APP_URL: ${APP_URL}
+      UPLOADS_PATH: /app/uploads
+    depends_on:
+      - db
+    networks:
+      - vet-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_gateway
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./uploads:/var/www/uploads
+    depends_on:
+      - backend
+    networks:
+      - vet-network
+
+volumes:
+  postgres_data:
+
+networks:
+  vet-network:
+    driver: bridge

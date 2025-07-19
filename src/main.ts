@@ -15,8 +15,13 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT);
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
 
-  logger.log(`Servidor Corriendo en el puerto ${process.env.PORT}`);
+  logger.log(`Servidor Corriendo en el puerto ${port}`);
 }
 bootstrap();

@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/auth.entity';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtPayload } from 'src/interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';

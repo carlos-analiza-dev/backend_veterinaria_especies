@@ -153,6 +153,7 @@ export class SeedService {
         direccion: 'Tegucigalpa, Honduras',
         telefono: '+504 8770-9116',
         identificacion: '1201-2000-00131',
+        sexo: 'M',
         role: adminRole,
         isActive: true,
         isAuthorized: true,
