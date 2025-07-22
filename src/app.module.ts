@@ -23,6 +23,8 @@ import { ProfileImagesModule } from './profile_images/profile_images.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ImagesAminalesModule } from './images_aminales/images_aminales.module';
+import { InsumosUsuarioModule } from './insumos_usuario/insumos_usuario.module';
+import { AnalisisUsuarioModule } from './analisis_usuario/analisis_usuario.module';
 
 @Module({
   imports: [
@@ -64,6 +66,10 @@ import { ImagesAminalesModule } from './images_aminales/images_aminales.module';
     ProfileImagesModule,
 
     ImagesAminalesModule,
+
+    InsumosUsuarioModule,
+
+    AnalisisUsuarioModule,
   ],
   controllers: [],
   providers: [],

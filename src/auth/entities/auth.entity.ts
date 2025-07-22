@@ -2,6 +2,7 @@ import { Exclude } from 'class-transformer';
 import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
+import { InsumosUsuario } from 'src/insumos_usuario/entities/insumos_usuario.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
 import { ProfileImage } from 'src/profile_images/entities/profile_image.entity';
@@ -77,6 +78,9 @@ export class User {
     eager: true,
   })
   profileImages: ProfileImage[];
+
+  @OneToMany(() => InsumosUsuario, (insumo) => insumo.user)
+  insumosCapex: InsumosUsuario[];
 
   get currentProfileImage(): ProfileImage | null {
     if (!this.profileImages || this.profileImages.length === 0) return null;
