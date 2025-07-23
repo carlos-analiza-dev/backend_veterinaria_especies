@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { AnalisisEficiencia } from 'src/analisis_usuario/entities/analisis_usuario.entity';
 import { AnimalFinca } from 'src/animal_finca/entities/animal_finca.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.entity';
@@ -81,6 +82,9 @@ export class User {
 
   @OneToMany(() => InsumosUsuario, (insumo) => insumo.user)
   insumosCapex: InsumosUsuario[];
+
+  @OneToMany(() => AnalisisEficiencia, (analisis) => analisis.user)
+  analisisEficiencia: AnalisisEficiencia[];
 
   get currentProfileImage(): ProfileImage | null {
     if (!this.profileImages || this.profileImages.length === 0) return null;
