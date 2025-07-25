@@ -58,6 +58,14 @@ export class CreateAnimalFincaDto {
   @IsNotEmpty({ message: 'El color del animal es obligatorio' })
   color: string;
 
+  @IsString({ message: 'La produccion debe ser un texto' })
+  @IsNotEmpty({ message: 'La produccion del animal es obligatorio' })
+  produccion: string;
+
+  @IsString({ message: 'El tipo de produccion debe ser un texto' })
+  @IsNotEmpty({ message: 'El tipo de produccion del animal es obligatorio' })
+  tipo_produccion: string;
+
   @IsArray({ message: 'La alimentación debe ser un arreglo' })
   @IsNotEmpty({ message: 'Debe ingresar al menos un alimento' })
   @ValidateNested({ each: true })
@@ -118,6 +126,14 @@ export class CreateAnimalFincaDto {
   @IsOptional()
   @IsBoolean({ message: 'El valor de castrado debe ser verdadero o falso' })
   castrado?: boolean;
+
+  @IsOptional()
+  @IsBoolean({ message: 'El valor de la muerte debe ser verdadero o falso' })
+  animal_muerte?: boolean;
+
+  @IsString()
+  @IsOptional()
+  razon_muerte?: string;
 
   @IsOptional()
   @IsBoolean({ message: 'El valor de esterilizado debe ser verdadero o falso' })

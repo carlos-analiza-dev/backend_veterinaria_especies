@@ -6,6 +6,7 @@ import { FincasGanadero } from 'src/fincas_ganadero/entities/fincas_ganadero.ent
 import { InsumosUsuario } from 'src/insumos_usuario/entities/insumos_usuario.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
+import { ProduccionFinca } from 'src/produccion_finca/entities/produccion_finca.entity';
 import { ProfileImage } from 'src/profile_images/entities/profile_image.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import {
@@ -79,6 +80,9 @@ export class User {
     eager: true,
   })
   profileImages: ProfileImage[];
+
+  @OneToMany(() => ProduccionFinca, (produccion) => produccion.propietario)
+  producciones: ProduccionFinca[];
 
   @OneToMany(() => InsumosUsuario, (insumo) => insumo.user)
   insumosCapex: InsumosUsuario[];

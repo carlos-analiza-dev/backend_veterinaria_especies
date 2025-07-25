@@ -86,6 +86,18 @@ export class AnimalFinca {
   @Column({ type: 'varchar', length: 100, default: 'Sin medicamento' })
   medicamento: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  produccion: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  tipo_produccion: string;
+
+  @Column({ type: 'bool', default: false })
+  animal_muerte: boolean;
+
+  @Column({ type: 'varchar', default: 'N/D' })
+  razon_muerte: string;
+
   @Column({ type: 'boolean', default: false })
   compra_animal: boolean;
 

@@ -39,6 +39,10 @@ export class AnimalFincaService {
       propietarioId,
       razaIds,
       sexo,
+      produccion,
+      tipo_produccion,
+      animal_muerte,
+      razon_muerte,
       fecha_nacimiento,
       observaciones,
       tipo_alimentacion,
@@ -183,6 +187,8 @@ export class AnimalFincaService {
         identificador,
         razas,
         sexo,
+        produccion,
+        tipo_produccion,
         edad_promedio: edadCalculada,
         fecha_nacimiento,
         observaciones,
@@ -191,6 +197,8 @@ export class AnimalFincaService {
         castrado,
         esterelizado,
         tipo_alimentacion,
+        animal_muerte,
+        razon_muerte,
         complementos,
         medicamento,
         pureza,
@@ -344,6 +352,10 @@ export class AnimalFincaService {
       propietarioId,
       razaIds,
       sexo,
+      animal_muerte,
+      produccion,
+      razon_muerte,
+      tipo_produccion,
       edad_promedio,
       fecha_nacimiento,
       observaciones,
@@ -587,6 +599,10 @@ export class AnimalFincaService {
     if (pureza_madre !== undefined) animal.pureza_madre = pureza_madre;
     if (tipo_reproduccion !== undefined)
       animal.tipo_reproduccion = tipo_reproduccion;
+    if (tipo_produccion !== undefined) animal.tipo_produccion = tipo_produccion;
+    if (produccion !== undefined) animal.produccion = produccion;
+    if (animal_muerte !== undefined) animal.animal_muerte = animal_muerte;
+    if (razon_muerte !== undefined) animal.razon_muerte = razon_muerte;
 
     await this.animalRepo.save(animal);
 

@@ -3,6 +3,7 @@ import { User } from 'src/auth/entities/auth.entity';
 import { DepartamentosPai } from 'src/departamentos_pais/entities/departamentos_pai.entity';
 import { MunicipiosDepartamentosPai } from 'src/municipios_departamentos_pais/entities/municipios_departamentos_pai.entity';
 import { Pai } from 'src/pais/entities/pai.entity';
+import { ProduccionFinca } from 'src/produccion_finca/entities/produccion_finca.entity';
 import {
   Column,
   Entity,
@@ -10,6 +11,8 @@ import {
   ManyToOne,
   CreateDateColumn,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('finca_ganadero')
@@ -67,4 +70,11 @@ export class FincasGanadero {
 
   @OneToMany(() => AnimalFinca, (animal) => animal.finca)
   animales: AnimalFinca[];
+
+  @OneToOne(() => ProduccionFinca, (produccion) => produccion.finca, {
+    cascade: true,
+    nullable: true,
+  })
+  @JoinColumn()
+  produccion: ProduccionFinca;
 }

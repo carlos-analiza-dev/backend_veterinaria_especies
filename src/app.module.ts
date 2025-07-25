@@ -25,6 +25,11 @@ import { join } from 'path';
 import { ImagesAminalesModule } from './images_aminales/images_aminales.module';
 import { InsumosUsuarioModule } from './insumos_usuario/insumos_usuario.module';
 import { AnalisisUsuarioModule } from './analisis_usuario/analisis_usuario.module';
+import { ProduccionFincaModule } from './produccion_finca/produccion_finca.module';
+import { ProduccionGanaderaModule } from './produccion_ganadera/produccion_ganadera.module';
+import { ProduccionAgricolaModule } from './produccion_agricola/produccion_agricola.module';
+import { ProduccionForrajesInsumosModule } from './produccion_forrajes_insumos/produccion_forrajes_insumos.module';
+import { ProduccionAlternativaModule } from './produccion_alternativa/produccion_alternativa.module';
 
 @Module({
   imports: [
@@ -70,6 +75,16 @@ import { AnalisisUsuarioModule } from './analisis_usuario/analisis_usuario.modul
     InsumosUsuarioModule,
 
     AnalisisUsuarioModule,
+
+    ProduccionFincaModule,
+
+    ProduccionGanaderaModule,
+
+    ProduccionAgricolaModule,
+
+    ProduccionForrajesInsumosModule,
+
+    ProduccionAlternativaModule,
   ],
   controllers: [],
   providers: [],
