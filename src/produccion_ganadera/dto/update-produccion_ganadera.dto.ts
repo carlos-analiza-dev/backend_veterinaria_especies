@@ -1,4 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateProduccionGanaderaDto } from './create-produccion_ganadera.dto';
+import { ProduccionGanaderaDto } from './create-produccion_ganadera.dto';
 
-export class UpdateProduccionGanaderaDto extends PartialType(CreateProduccionGanaderaDto) {}
+export class UpdateProduccionGanaderaDto extends PartialType(
+  ProduccionGanaderaDto,
+) {}

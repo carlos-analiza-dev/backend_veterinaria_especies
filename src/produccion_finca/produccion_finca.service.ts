@@ -16,6 +16,7 @@ import { ProduccionAlternativa } from '../produccion_alternativa/entities/produc
 import { ProduccionGanadera } from '../produccion_ganadera/entities/produccion_ganadera.entity';
 import { ProduccionForrajesInsumo } from '../produccion_forrajes_insumos/entities/produccion_forrajes_insumo.entity';
 import { User } from '../auth/entities/auth.entity';
+import { ProduccionApicultura } from 'src/produccion_apicultura/entities/produccion_apicultura.entity';
 
 @Injectable()
 export class ProduccionFincaService {
@@ -32,6 +33,8 @@ export class ProduccionFincaService {
     private readonly produccion_ganadera_repo: Repository<ProduccionGanadera>,
     @InjectRepository(ProduccionForrajesInsumo)
     private readonly produccion_forrajes_rep: Repository<ProduccionForrajesInsumo>,
+    @InjectRepository(ProduccionApicultura)
+    private readonly produccion_apicultura_rep: Repository<ProduccionApicultura>,
     @InjectRepository(User)
     private readonly usuario_rep: Repository<User>,
   ) {}
@@ -45,6 +48,7 @@ export class ProduccionFincaService {
       consumo_propio,
       forrajesInsumo,
       ganadera,
+      apicultura,
       produccion_mixta,
       produccion_venta,
       transformacion_artesanal,
@@ -98,6 +102,12 @@ export class ProduccionFincaService {
         );
       }
 
+      if (apicultura) {
+        produccion.apicultura = await this.produccion_apicultura_rep.save(
+          this.produccion_apicultura_rep.create(apicultura),
+        );
+      }
+
       if (agricola?.cultivos) {
         const cultivos = agricola.cultivos.map((c) => ({
           tipo: c.tipo,
@@ -145,19 +155,9 @@ export class ProduccionFincaService {
         );
       }
 
-      const savedProduccion = await this.produccion_finca_repo.save(produccion);
+      await this.produccion_finca_repo.save(produccion);
 
-      return this.produccion_finca_repo.findOne({
-        where: { id: savedProduccion.id },
-        relations: [
-          'finca',
-          'propietario',
-          'ganadera',
-          'agricola',
-          'forrajesInsumo',
-          'alternativa',
-        ],
-      });
+      return 'Produccion Creada Exitosamente';
     } catch (error) {
       if (
         error instanceof NotFoundException ||

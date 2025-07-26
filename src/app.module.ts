@@ -30,6 +30,7 @@ import { ProduccionGanaderaModule } from './produccion_ganadera/produccion_ganad
 import { ProduccionAgricolaModule } from './produccion_agricola/produccion_agricola.module';
 import { ProduccionForrajesInsumosModule } from './produccion_forrajes_insumos/produccion_forrajes_insumos.module';
 import { ProduccionAlternativaModule } from './produccion_alternativa/produccion_alternativa.module';
+import { ProduccionApiculturaModule } from './produccion_apicultura/produccion_apicultura.module';
 
 @Module({
   imports: [
@@ -85,6 +86,8 @@ import { ProduccionAlternativaModule } from './produccion_alternativa/produccion
     ProduccionForrajesInsumosModule,
 
     ProduccionAlternativaModule,
+
+    ProduccionApiculturaModule,
   ],
   controllers: [],
   providers: [],

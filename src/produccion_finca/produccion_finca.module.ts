@@ -9,6 +9,7 @@ import { ProduccionGanadera } from 'src/produccion_ganadera/entities/produccion_
 import { ProduccionAlternativa } from 'src/produccion_alternativa/entities/produccion_alternativa.entity';
 import { ProduccionForrajesInsumo } from 'src/produccion_forrajes_insumos/entities/produccion_forrajes_insumo.entity';
 import { User } from 'src/auth/entities/auth.entity';
+import { ProduccionApicultura } from 'src/produccion_apicultura/entities/produccion_apicultura.entity';
 
 @Module({
   controllers: [ProduccionFincaController],
@@ -20,6 +21,7 @@ import { User } from 'src/auth/entities/auth.entity';
       ProduccionGanadera,
       ProduccionAlternativa,
       ProduccionForrajesInsumo,
+      ProduccionApicultura,
       User,
     ]),
   ],

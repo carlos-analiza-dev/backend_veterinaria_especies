@@ -1,14 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProduccionGanaderaService } from './produccion_ganadera.service';
-import { CreateProduccionGanaderaDto } from './dto/create-produccion_ganadera.dto';
+
 import { UpdateProduccionGanaderaDto } from './dto/update-produccion_ganadera.dto';
+import { ProduccionGanaderaDto } from './dto/create-produccion_ganadera.dto';
 
 @Controller('produccion-ganadera')
 export class ProduccionGanaderaController {
-  constructor(private readonly produccionGanaderaService: ProduccionGanaderaService) {}
+  constructor(
+    private readonly produccionGanaderaService: ProduccionGanaderaService,
+  ) {}
 
   @Post()
-  create(@Body() createProduccionGanaderaDto: CreateProduccionGanaderaDto) {
+  create(@Body() createProduccionGanaderaDto: ProduccionGanaderaDto) {
     return this.produccionGanaderaService.create(createProduccionGanaderaDto);
   }
 
@@ -23,8 +34,14 @@ export class ProduccionGanaderaController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProduccionGanaderaDto: UpdateProduccionGanaderaDto) {
-    return this.produccionGanaderaService.update(+id, updateProduccionGanaderaDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateProduccionGanaderaDto: UpdateProduccionGanaderaDto,
+  ) {
+    return this.produccionGanaderaService.update(
+      +id,
+      updateProduccionGanaderaDto,
+    );
   }
 
   @Delete(':id')
